@@ -1,4 +1,10 @@
-**Table of Contents**
+# 📘 JavaScript DOM Interview Notes
+
+
+---
+
+## Table of Contents
+
 
 DOM (Document Object Model)
 What is the DOM?
@@ -8,52 +14,84 @@ Creating and Removing Elements
 DOM Traversal
 Attributes vs Properties
 
-**Events:-**
+
+---
+
+## Events:-
+
 Event Handling
 Event Bubbling and Capturing
 Event Delegation
 preventDefault and stopPropagation
 
-**Browser APIs:-**
+
+---
+
+## Browser APIs:-
+
 Window vs Document
 localStorage vs sessionStorage
 Browser Navigation and History
 
-**OOP Fundamentals:-**
+
+---
+
+## OOP Fundamentals:-
+
 What is OOP?
 Classes and Objects
 Constructor Functions
 The 'new' Keyword
 Static Methods and Properties
 
-**Prototypes & Inheritance:-**
+
+---
+
+## Prototypes & Inheritance:-
+
 What is Prototype?
 Prototype Chain
 __proto__ vs prototype
 Prototypal Inheritance
 Classical vs Prototypal Inheritance
 
-**Advanced OOP:-**
+
+---
+
+## Advanced OOP:-
+
 Inheritance with Classes
 Method Overriding
 Private Fields and Methods
 Getters and Setters
 instanceof Operator
 
-**OOP Principles:-**
+
+---
+
+## OOP Principles:-
+
 Encapsulation
 Abstraction
 Inheritance
 Polymorphism
 
-**Design Patterns:-**
+
+---
+
+## Design Patterns:-
+
 Module Pattern
 Revealing Module Pattern
 Singleton Pattern
 Factory Pattern
 Observer Pattern
 
-**Q1: What is the DOM ?**
+
+---
+
+## Q1: What is the DOM ?
+
 "The DOM (Document Object Model) is a programming interface for HTML and XML documents. It represents the page as a tree structure where each HTML element is a node that can be accessed and manipulated using JavaScript.
 
 Key points about DOM:
@@ -85,7 +123,11 @@ Interactivity - Respond to user actions
 Real-time updates - Update parts of page dynamically
 Structure - Provides organized way to access elements
 
-**Q2: What are the different ways to select DOM elements?
+
+---
+
+# Q2: What are the different ways to select DOM elements?
+
 How to Answer:**
 
 JavaScript provides several methods to select DOM elements, each with different use cases.
@@ -128,7 +170,11 @@ const elements = document.querySelectorAll('div p'); // All p inside div
 const elements = document.querySelectorAll('[data-active="true"]');
 When to use: Modern approach for selecting multiple elements with complex criteria.
 
-**Q3: How do you manipulate DOM elements?
+
+---
+
+# Q3: How do you manipulate DOM elements?
+
 How to Answer:**
 
 "DOM manipulation means changing the content, structure, or styling of elements after the page has loaded. There are several ways to do this.
@@ -166,7 +212,11 @@ element.innerHTML = '<span style="display:none">Hidden</span> Visible';
 console.log(element.innerText); // 'Visible' (skips hidden)
 console.log(element.textContent); // 'Hidden Visible' (includes hidden)
 
-**Q4. DOM Manipulation: Create, Insert & Remove Elements**
+
+---
+
+## Q4. DOM Manipulation: Create, Insert & Remove Elements
+
 
 ## 1. Create Element
 
@@ -274,7 +324,11 @@ oldNode.replaceWith(newNode);
 * `DocumentFragment` → Best for inserting many elements efficiently.
 
 
-**Q5. What's the difference between attributes and properties?
+
+---
+
+# Q5. What's the difference between attributes and properties?
+
 How to Answer:**
 
 "Attributes and properties are related but different concepts in the DOM. This is a common source of confusion.
@@ -334,7 +388,11 @@ const input = document.querySelector("input");
 console.log(input.checked);         // true
 console.log(typeof input.checked);  // "boolean"
 
-**Q6.How do you handle events in JavaScript?**
+
+---
+
+## Q6.How do you handle events in JavaScript?
+
 
 What is an Event?
 An event is an action performed by the user or browser.
@@ -477,7 +535,11 @@ You use 1 parent listener -yes
 3. Works for dynamic elements Even if new buttons are added later, it still works:
 
 
-**Q7. What's the difference between preventDefault() and stopPropagation()?**
+
+---
+
+## Q7. What's the difference between preventDefault() and stopPropagation()?
+
 preventDefault() prevents the browser's default action, while stopPropagation() prevents the event from propagating to parent elements. They solve different problems and are often used together.
 
 1. preventDefault()
