@@ -1,41 +1,127 @@
-# 📘 JavaScript DOM Interview Notes
+# 📘 JavaScript Interview Notes
 
-> **Interview Focus:** DOM fundamentals, DOM selection methods, manipulation, events, browser APIs, and OOP concepts frequently asked in JavaScript interviews.
+> **Interview-Focused Roadmap** covering **DOM**, **Events**, **Browser APIs**, **OOP**, **Prototypes**, **Inheritance**, and **Design Patterns**.
 
 ---
 
 # 📑 Table of Contents
 
 - [DOM (Document Object Model)](#-dom-document-object-model)
-  - [Q1: What is the DOM?](#q1-what-is-the-dom)
-  - [Q2: Different Ways to Select DOM Elements](#q2-what-are-the-different-ways-to-select-dom-elements)
-- DOM Manipulation
-- Creating and Removing Elements
-- DOM Traversal
-- Attributes vs Properties
-- Events
+  - What is the DOM?
+  - DOM Selection Methods
+  - DOM Manipulation
+  - Creating and Removing Elements
+  - DOM Traversal
+  - Attributes vs Properties
+- [Events](#-events)
   - Event Handling
-  - Event Bubbling & Capturing
+  - Event Bubbling and Capturing
   - Event Delegation
   - `preventDefault()` vs `stopPropagation()`
-- Browser APIs
+- [Browser APIs](#-browser-apis)
   - Window vs Document
   - localStorage vs sessionStorage
-  - Browser Navigation & History
-- OOP Fundamentals
-- Prototypes & Inheritance
-- Advanced OOP
-- OOP Principles
-- Design Patterns
-- Interview Tips
-- Common Interview Questions
-- Key Takeaways
+  - Browser Navigation and History
+- [OOP Fundamentals](#-oop-fundamentals)
+  - What is OOP?
+  - Classes and Objects
+  - Constructor Functions
+  - The `new` Keyword
+  - Static Methods and Properties
+- [Prototypes & Inheritance](#-prototypes--inheritance)
+  - What is Prototype?
+  - Prototype Chain
+  - `__proto__` vs `prototype`
+  - Prototypal Inheritance
+  - Classical vs Prototypal Inheritance
+- [Advanced OOP](#-advanced-oop)
+  - Inheritance with Classes
+  - Method Overriding
+  - Private Fields and Methods
+  - Getters and Setters
+  - `instanceof` Operator
+- [OOP Principles](#-oop-principles)
+  - Encapsulation
+  - Abstraction
+  - Inheritance
+  - Polymorphism
+- [Design Patterns](#-design-patterns)
+  - Module Pattern
+  - Revealing Module Pattern
+  - Singleton Pattern
+  - Factory Pattern
+  - Observer Pattern
 
 ---
 
 # 🌐 DOM (Document Object Model)
 
+- What is the DOM?
+- DOM Selection Methods
+- DOM Manipulation
+- Creating and Removing Elements
+- DOM Traversal
+- Attributes vs Properties
+
 ---
+
+# ⚡ Events
+
+- Event Handling
+- Event Bubbling and Capturing
+- Event Delegation
+- **`preventDefault()` vs `stopPropagation()`**
+
+---
+
+# 🌍 Browser APIs
+
+- Window vs Document
+- localStorage vs sessionStorage
+- Browser Navigation and History
+
+---
+
+# 🏗️ OOP Fundamentals
+
+- What is OOP?
+- Classes and Objects
+- Constructor Functions
+- The **`new`** Keyword
+- Static Methods and Properties
+
+---
+
+# 🔗 Prototypes & Inheritance
+
+- What is Prototype?
+- Prototype Chain
+- **`__proto__` vs `prototype`**
+- Prototypal Inheritance
+- Classical vs Prototypal Inheritance
+
+---
+
+# 🚀 Advanced OOP
+
+- Inheritance with Classes
+- Method Overriding
+- Private Fields and Methods
+- Getters and Setters
+- **`instanceof`** Operator
+
+---
+
+# 🧩 OOP Principles
+
+- Encapsulation
+- Abstraction
+- Inheritance
+- Polymorphism
+
+---
+
+
 
 ## Q1: What is the DOM?
 
