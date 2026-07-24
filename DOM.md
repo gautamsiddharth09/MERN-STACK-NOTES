@@ -683,29 +683,6 @@ console.log(typeof input.checked); // "boolean"
 
 ---
 
-# ⚠️ Common Mistakes
-
-- ❌ Using **`innerHTML`** when plain text is sufficient.
-- ❌ Assuming **Attributes** and **Properties** are the same.
-- ❌ Forgetting that **`createElement()`** only creates an element in memory.
-- ❌ Thinking **`appendChild()`** can append multiple nodes.
-- ❌ Confusing **`innerText`** with **`textContent`**.
-
----
-
-# 📝 Key Takeaways
-
-- ✅ **DOM Manipulation** changes webpage content, structure, or styling dynamically.
-- ✅ **`textContent`** is **safe** and **faster** for plain text.
-- ✅ **`innerHTML`** parses and renders HTML.
-- ✅ **`innerText`** respects CSS visibility, while **`textContent`** includes hidden text.
-- ✅ **`createElement()`** creates elements in memory.
-- ✅ **`append()`** supports multiple nodes and text.
-- ✅ **Attributes** belong to **HTML**.
-- ✅ **Properties** belong to the **DOM Object**.
-- ✅ **Attributes store initial values**, while **Properties reflect the current state**.
----
-
 # Q6: How do you Handle Events in JavaScript?
 
 ### Answer
@@ -1288,25 +1265,3 @@ The event **does not reach the parent**.
 10. Can both methods be used together?
 
 ---
-
-# ⚠️ Common Mistakes
-
-- ❌ Thinking **Event Delegation** is an event phase.
-- ❌ Forgetting that **Capturing is disabled by default**.
-- ❌ Confusing **`event.target`** with **`event.currentTarget`**.
-- ❌ Using **`onclick`** when multiple listeners are required.
-- ❌ Assuming `preventDefault()` stops bubbling.
-
----
-
-# 📝 Key Takeaways
-
-- ✅ An **Event** is an action performed by the user or browser.
-- ✅ **`addEventListener()`** is the recommended way to handle events.
-- ✅ The **Event Object** provides details about the triggered event.
-- ✅ JavaScript Event Flow has **Capturing → Target → Bubbling** phases.
-- ✅ **Event Capturing** flows from **top to bottom**.
-- ✅ **Event Bubbling** flows from **bottom to top**.
-- ✅ **Event Delegation** is a technique that uses **Event Bubbling**.
-- ✅ **`preventDefault()`** stops the browser's default action.
-- ✅ **`stopPropagation()`** stops the event from reaching parent elements.
