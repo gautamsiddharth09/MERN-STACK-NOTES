@@ -278,28 +278,6 @@ const elements = document.querySelectorAll('[data-active="true"]');
 
 ---
 
-# ⚠️ Common Mistakes
-
-- ❌ Thinking the **DOM is JavaScript**.
-- ❌ Assuming **`querySelector()`** returns multiple elements.
-- ❌ Confusing **HTMLCollection** with **NodeList**.
-- ❌ Forgetting that **IDs should be unique**.
-- ❌ Assuming **`querySelectorAll()`** returns a live collection.
-
----
-
-# 📝 Key Takeaways
-
-- ✅ **DOM** is a **browser-provided Web API**, not JavaScript.
-- ✅ The browser converts HTML into a **DOM Tree**.
-- ✅ JavaScript manipulates webpages through the **DOM API**.
-- ✅ **`getElementById()`** is best for unique elements.
-- ✅ **`querySelector()`** returns the **first** matching element.
-- ✅ **`querySelectorAll()`** returns **all** matching elements as a **static NodeList**.
-- ✅ **`getElementsByClassName()`** and **`getElementsByTagName()`** return **live HTMLCollections**.
-- ✅ Understanding **DOM selection methods** is a frequently asked JavaScript interview topic.
----
-
 # Q3: How do you Manipulate DOM Elements?
 
 ### Answer
