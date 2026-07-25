@@ -1,6 +1,6 @@
 # 📘 JavaScript Interview Notes
 
-> **Interview-Focused Roadmap** covering **DOM**, **Events**, **Browser APIs**, **OOP**, **Prototypes**, **Inheritance**, and **Design Patterns**.
+> **Interview-Focused Roadmap** covering **DOM**, **Events**, **Browser APIs**, **OOP**, **Prototypes**, **Inheritance**.
 
 ---
 
@@ -45,13 +45,6 @@
   - Abstraction
   - Inheritance
   - Polymorphism
-- [Design Patterns](#-design-patterns)
-  - Module Pattern
-  - Revealing Module Pattern
-  - Singleton Pattern
-  - Factory Pattern
-  - Observer Pattern
-
 ---
 
 
@@ -1262,3 +1255,844 @@ The event **does not reach the parent**.
 10. Can both methods be used together?
 
 ---
+
+ # 8. What's the difference between `window` and `document`?
+
+## How to Answer
+
+> "window and document are both global objects in the browser, but they represent different things.
+
+---
+
+## `window`
+
+The global object representing the browser window. It's the top-level object containing everything.
+
+### Example
+
+```javascript
+// Global object
+console.log(window); // The window object itself
+
+// Global variables are properties of window
+var myVar = 'hello';
+console.log(window.myVar); // 'hello'
+
+// Window properties
+console.log(window.innerWidth);   // Viewport width
+console.log(window.innerHeight);  // Viewport height
+console.log(window.location);     // Current URL
+console.log(window.history);      // Browser history
+console.log(window.localStorage); // Local storage
+```
+
+---
+
+## `document`
+
+Represents the HTML document loaded in the window. It's a property of window.
+
+### Example
+
+```javascript
+// document is property of window
+console.log(window.document === document); // true
+
+// Document represents the DOM
+console.log(document.body);          // Body element
+console.log(document.title);         // Page title
+console.log(document.querySelector); // DOM methods
+```
+
+---
+
+# Key differences
+
+| `window` | `document` |
+|----------|------------|
+| Browser window | HTML document |
+| Global scope | DOM tree |
+| `window.alert()` | `document.querySelector()` |
+| `window.location` | `document.body` |
+| `window.innerWidth` | `document.title` |
+
+---
+
+# `window` methods and properties
+
+## Dialogs
+
+```javascript
+window.alert('Message');
+window.confirm('Are you sure?');
+window.prompt('Enter name:');
+```
+
+## Timing
+
+```javascript
+window.setTimeout(() => {}, 1000);
+window.setInterval(() => {}, 1000);
+```
+
+## Navigation
+
+```javascript
+window.open('url');
+window.close();
+window.location.href = 'url';
+```
+
+## Dimensions
+
+```javascript
+window.innerWidth;
+window.innerHeight;
+window.outerWidth;
+window.outerHeight;
+```
+
+## Scroll
+
+```javascript
+window.scrollTo(0, 0);
+window.scrollBy(0, 100);
+```
+
+---
+
+# `document` methods and properties
+
+## DOM selection
+
+```javascript
+document.getElementById('id');
+document.querySelector('.class');
+```
+
+## DOM manipulation
+
+```javascript
+document.createElement('div');
+document.createTextNode('text');
+```
+
+## Document info
+
+```javascript
+document.title;
+document.URL;
+document.domain;
+document.cookie;
+```
+
+## Events
+
+```javascript
+document.addEventListener('click', handler);
+```
+
+---
+
+# Hierarchy
+
+Interview tip: window is the global browser object containing everything including document. document represents the HTML DOM tree and is a property of window. window has browser-related APIs, document has DOM manipulation methods.
+
+
+# 9. What's the difference between `localStorage`, `sessionStorage`, and `cookies`?
+
+## How to Answer
+
+> "All three store data in the browser, but they differ in capacity, expiration, and scope.
+
+---
+
+# `localStorage`
+
+Stores data with no expiration. Data persists even after browser is closed.
+
+## Set item
+
+```javascript
+localStorage.setItem('username', 'John');
+localStorage.setItem('user', JSON.stringify({ name: 'John', age: 30 }));
+```
+
+## Get item
+
+```javascript
+const username = localStorage.getItem('username'); // 'John'
+const user = JSON.parse(localStorage.getItem('user'));
+```
+
+## Remove item
+
+```javascript
+localStorage.removeItem('username');
+```
+
+## Clear all
+
+```javascript
+localStorage.clear();
+```
+
+## Check length
+
+```javascript
+console.log(localStorage.length);
+```
+
+## Iterate
+
+```javascript
+for (let i = 0; i < localStorage.length; i++) {
+  const key = localStorage.key(i);
+  console.log(key, localStorage.getItem(key));
+}
+```
+
+---
+
+# `sessionStorage`
+
+Same API as `localStorage`, but data clears when tab/browser closes.
+
+## Example
+
+```javascript
+// Same methods as localStorage
+sessionStorage.setItem('temp', 'data');
+sessionStorage.getItem('temp');
+sessionStorage.removeItem('temp');
+sessionStorage.clear();
+```
+
+---
+
+# `Cookies`
+
+Older storage method, sent to server with every request.
+
+## Set cookie
+
+```javascript
+document.cookie = 'username=John; max-age=3600; path=/';
+```
+
+## Get all cookies (as string)
+
+```javascript
+console.log(document.cookie); // 'username=John; theme=dark'
+```
+
+## Delete cookie (set expired)
+
+```javascript
+document.cookie = 'username=; max-age=0';
+```
+
+---
+
+# Comparison table
+
+| Feature | `localStorage` | `sessionStorage` | `Cookies` |
+|----------|----------------|------------------|-----------|
+| Capacity | ~10MB | ~10MB | ~4KB |
+| Expiration | Never | Tab close | Set manually |
+| Scope | All tabs/windows | Single tab | Domain |
+| Sent to server | No | No | Yes (auto) |
+| API | Simple | Simple | String-based |
+| Use case | Long-term | Temporary | Auth tokens |
+
+---
+
+# When to use
+
+## `localStorage`
+
+- User preferences (theme, language)
+- Cart data (persists across sessions)
+- Cached data
+- Draft content
+
+---
+
+## `sessionStorage`
+
+- Form data during session
+- Temporary state
+- Multi-step processes
+- Tab-specific data
+
+---
+
+## `Cookies`
+
+- Authentication tokens
+- Session IDs
+- Server needs the data
+- Cross-domain situations
+
+---
+
+# Security considerations
+
+```javascript
+// localStorage/sessionStorage - visible in DevTools
+// Don't store sensitive data!
+localStorage.setItem('password', '123'); // Bad!
+
+// For sensitive data, use httpOnly cookies (server-side only)
+// Can't be accessed by JavaScript
+```
+
+---
+
+# Interview tip
+
+> localStorage persists forever, sessionStorage clears on tab close, cookies expire based on settings and are sent to server. localStorage/sessionStorage hold ~10MB, cookies only ~4KB. Use localStorage for user preferences, sessionStorage for temporary data, cookies for auth.
+
+# OOP Fundamentals
+
+# Q10: What is Object-Oriented Programming?
+
+## How to Answer
+
+> "Object-Oriented Programming (OOP) is a programming paradigm based on the concept of objects, which contain data (properties) and code (methods).
+
+---
+
+# Core concept
+
+Instead of having separate functions and data, OOP bundles them together into objects. An object represents a real-world entity with characteristics (properties) and behaviors (methods).
+
+---
+
+# Example without OOP
+
+```javascript
+// Procedural approach
+const userName = 'John';
+const userAge = 30;
+
+function greetUser() {
+  console.log(`Hello ${userName}`);
+}
+
+function getUserInfo() {
+  return `${userName} is ${userAge}`;
+}
+```
+
+---
+
+# Example with OOP
+
+```javascript
+// Object-oriented approach
+const user = {
+  name: 'John',
+  age: 30,
+
+  greet() {
+    console.log(`Hello ${this.name}`);
+  },
+
+  getInfo() {
+    return `${this.name} is ${this.age}`;
+  }
+};
+
+user.greet(); // 'Hello John'
+```
+
+---
+
+# Four pillars of OOP
+
+1. **Encapsulation** - Bundle data and methods together
+2. **Abstraction** - Hide complex details, show only necessary
+3. **Inheritance** - Reuse code from parent classes
+4. **Polymorphism** - Same interface, different implementations
+
+These are covered in detail in later questions.
+
+---
+
+# Benefits of OOP
+
+- Organization - Code is structured and logical
+- Reusability - Inheritance allows code reuse
+- Maintainability - Easier to update and debug
+- Scalability - Better for large applications
+- Modularity - Independent objects
+- Real-world modeling - Objects represent real entities
+
+---
+
+# OOP in JavaScript
+
+JavaScript uses prototypal inheritance, not classical inheritance like Java/C++, but achieves OOP principles.
+
+---
+
+# Interview tip
+
+> OOP organizes code around objects that contain both data and behavior. The four pillars are encapsulation, abstraction, inheritance, and polymorphism. Benefits include better organization, reusability, and maintainability.
+
+# Q11: What are classes in JavaScript?
+
+## How to Answer
+
+> "Classes in JavaScript (ES6+) are templates for creating objects. They provide a cleaner syntax for creating objects and dealing with inheritance.
+
+---
+
+# Basic class
+
+```javascript
+class Person {
+  // Constructor - runs when object is created
+  constructor(name, age) {
+    this.name = name; // Instance property
+    this.age = age;
+  }
+
+  // Method
+  greet() {
+    console.log(`Hello, I'm ${this.name}`);
+  }
+
+  // Method
+  getInfo() {
+    return `${this.name} is ${this.age} years old`;
+  }
+}
+
+// Create instance
+const john = new Person('John', 30);
+john.greet(); // 'Hello, I'm John'
+```
+
+---
+
+# Constructor
+
+Special method that runs when creating an instance:
+
+```javascript
+class Car {
+  constructor(brand, model) {
+    console.log('Creating car...');
+    this.brand = brand;
+    this.model = model;
+    this.speed = 0; // Default value
+  }
+}
+
+const myCar = new Car('Toyota', 'Camry');
+// Logs: 'Creating car...'
+```
+
+---
+
+# Class vs Object Literal
+
+## Object literal - single object
+
+```javascript
+const john = {
+  name: 'John',
+  greet() { console.log('Hello'); }
+};
+```
+
+## Class - template for multiple objects
+
+```javascript
+class Person {
+  constructor(name) {
+    this.name = name;
+  }
+
+  greet() {
+    console.log('Hello');
+  }
+}
+
+const john = new Person('John');
+const jane = new Person('Jane'); // Reusable!
+```
+
+---
+
+# Interview tip
+
+> Classes are templates for creating objects introduced in ES6. They have a constructor method that initializes properties and can have methods. Classes are syntactic sugar over JavaScript's prototypal inheritance.
+
+# Q12: What is Prototype in JavaScript?
+
+## How to Answer
+
+> "Prototype is the mechanism by which JavaScript objects inherit properties and methods from other objects. Every object in JavaScript has an internal link to another object called its prototype.
+
+---
+
+# How prototype works
+
+```javascript
+function Person(name) {
+  this.name = name;
+}
+
+// Add method to prototype
+Person.prototype.greet = function() {
+  console.log(`Hello, I'm ${this.name}`);
+};
+
+const john = new Person('John');
+john.greet(); // 'Hello, I'm John'
+// john doesn't have greet(), but its prototype does
+```
+
+---
+
+# Prototype chain
+
+When you access a property on an object:
+
+1. JavaScript first looks on the object itself
+2. If not found, looks at the object's prototype
+3. If not found, looks at the prototype's prototype
+4. Continues until reaches null (end of chain)
+
+```javascript
+const obj = { a: 1 };
+
+// obj → obj.__proto__ (Object.prototype) → null
+
+console.log(obj.toString); // Found on Object.prototype
+// Even though obj doesn't have toString, it inherits it
+```
+
+---
+
+# Why use prototype
+
+## Without prototype (inefficient)
+
+```javascript
+function Person(name) {
+  this.name = name;
+  this.greet = function() { // New function for EACH instance
+    console.log(`Hello ${this.name}`);
+  };
+}
+
+const john = new Person('John');
+const jane = new Person('Jane');
+
+console.log(john.greet === jane.greet); // false (different functions)
+// Memory waste - 1000 instances = 1000 copies of greet!
+```
+
+---
+
+## With prototype (efficient)
+
+```javascript
+function Person(name) {
+  this.name = name;
+}
+
+Person.prototype.greet = function() { // Shared by ALL instances
+  console.log(`Hello ${this.name}`);
+};
+
+const john = new Person('John');
+const jane = new Person('Jane');
+
+console.log(john.greet === jane.greet); // true (same function)
+// One function in memory, shared by all instances
+```
+
+---
+
+# Checking prototype
+
+```javascript
+const john = new Person('John');
+
+// Get prototype
+console.log(Object.getPrototypeOf(john));
+console.log(john.__proto__); // Non-standard but widely supported
+
+// Check if property is own or inherited
+console.log(john.hasOwnProperty('name')); // true (own)
+console.log(john.hasOwnProperty('greet')); // false (inherited)
+```
+
+---
+
+# Interview tip
+
+> Prototype is JavaScript's inheritance mechanism. Properties/methods on prototype are shared by all instances (memory efficient). When accessing a property, JavaScript searches the prototype chain until it finds it or reaches null.
+
+# Q13: What is the prototype chain?
+
+## How to Answer
+
+> "The prototype chain is how JavaScript implements inheritance. It's a series of links between objects through their prototypes.
+
+---
+
+# Visual representation
+
+```text
+instance → Constructor.prototype → Object.prototype → null
+```
+
+---
+
+# Example
+
+```javascript
+function Animal(name) {
+  this.name = name;
+}
+
+Animal.prototype.eat = function() {
+  console.log(`${this.name} is eating`);
+};
+
+function Dog(name, breed) {
+  Animal.call(this, name);
+  this.breed = breed;
+}
+
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;
+
+Dog.prototype.bark = function() {
+  console.log('Woof!');
+};
+
+const myDog = new Dog('Max', 'Labrador');
+
+// Prototype chain:
+// myDog → Dog.prototype → Animal.prototype → Object.prototype → null
+
+myDog.bark();      // Found on Dog.prototype
+myDog.eat();       // Found on Animal.prototype
+myDog.toString();  // Found on Object.prototype
+```
+
+---
+
+# How lookup works
+
+## `myDog.bark();`
+
+```javascript
+// 1. Check myDog itself? No
+// 2. Check Dog.prototype? YES - found!
+// Execute it
+```
+
+---
+
+## `myDog.eat();`
+
+```javascript
+// 1. Check myDog itself? No
+// 2. Check Dog.prototype? No
+// 3. Check Animal.prototype? YES - found!
+// Execute it
+```
+
+---
+
+# End of chain
+
+```javascript
+console.log(Object.getPrototypeOf(Object.prototype)); // null
+// null is the end of the prototype chain
+```
+
+---
+
+# Interview tip
+
+> The prototype chain is a linked list of prototypes. When accessing a property, JavaScript walks up the chain until it finds it or reaches null. This is how inheritance works in JavaScript.
+
+# OOP Principles
+
+# Q14: What is Encapsulation?
+
+## How to Answer
+
+> "Encapsulation is the process of combining data and methods into a single object while hiding the internal data from direct access.
+
+---
+
+# Benefits
+
+- Data hiding - Internal state is protected
+- Controlled access - Only expose what's necessary
+- Easier maintenance - Implementation can change without affecting external code
+- Prevent accidents - Can't accidentally modify internal state
+
+---
+
+# Example with private fields (ES2022)
+
+```javascript
+class BankAccount {
+  #balance = 0; // Private field (# makes it private)
+
+  constructor(initialBalance) {
+    this.#balance = initialBalance;
+  }
+
+  // Public method to access private data
+  getBalance() {
+    return this.#balance;
+  }
+
+  deposit(amount) {
+    if (amount > 0) {
+      this.#balance += amount;
+    }
+  }
+
+  withdraw(amount) {
+    if (amount > 0 && amount <= this.#balance) {
+      this.#balance -= amount;
+    }
+  }
+}
+
+const account = new Bank Account(1000);
+console.log(account.getBalance()); // 1000
+account.deposit(500);
+// account.#balance = 0; // Error! Can't access private field
+```
+
+---
+
+# Interview tip
+
+> Encapsulation means bundling data and methods together and hiding internal details. Use private fields (#) to restrict direct access. Expose only necessary methods (public interface) to interact with the object."
+
+---
+
+# 15: What is Inheritance?
+
+## How to Answer
+
+> "Inheritance allows a class to inherit properties and methods from another class, promoting code reuse.
+
+---
+
+# ES6 class inheritance
+
+```javascript
+// Parent class
+class Animal {
+  constructor(name) {
+    this.name = name;
+  }
+
+  eat() {
+    console.log(`${this.name} is eating`);
+  }
+}
+
+// Child class inherits from Animal
+class Dog extends Animal {
+  constructor(name, breed) {
+    super(name); // Call parent constructor
+    this.breed = breed;
+  }
+
+  bark() {
+    console.log('Woof!');
+  }
+}
+
+const myDog = new Dog('Max', 'Labrador');
+myDog.eat();  // Inherited from Animal
+myDog.bark(); // Own method
+```
+
+---
+
+# Key points
+
+- `extends` creates inheritance
+- `super()` calls parent constructor
+- Child has access to parent methods
+- Child can add own methods
+- Child can override parent methods
+
+---
+
+# Interview tip
+
+> Inheritance lets one class inherit from another using extends keyword. Use super() to call parent constructor. Child class gets all parent methods plus can add its own. This promotes code reuse."
+
+# Q16: What is Polymorphism?
+
+## How to Answer
+
+> "Polymorphism means 'many forms' - the ability of different objects to respond to the same method call in different ways.
+
+---
+
+# Example
+
+```javascript
+class Animal {
+  makeSound() {
+    console.log('Some generic sound');
+  }
+}
+
+class Dog extends Animal {
+  makeSound() {
+    console.log('Woof!');
+  }
+}
+
+class Cat extends Animal {
+  makeSound() {
+    console.log('Meow!');
+  }
+}
+
+const animals = [new Dog(), new Cat(), new Animal()];
+
+// Same method call, different behavior
+animals.forEach(animal => {
+  animal.makeSound();
+});
+// Woof!
+// Meow!
+// Some generic sound
+```
+
+---
+
+# Benefits
+
+- Same interface, different implementations
+- Easier to add new types
+- More flexible code
+- Treat objects generically
+
+---
+
+# Interview tip
+
+> Polymorphism allows different classes to respond differently to the same method. Method overriding is a form of polymorphism - child class provides its own implementation of parent method."
