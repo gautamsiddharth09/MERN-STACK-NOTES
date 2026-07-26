@@ -1750,3 +1750,1526 @@ function createHeavyCallback() {
 
  > Be careful - closures keep all outer scope variables in memory, even if unused. This can cause memory leaks with large data.
 >Closures are fundamental to JavaScript and essential for understanding how async callbacks work.
+
+
+# this Keyword with Callbacks
+
+## Q26: How does the 'this' keyword work in callbacks?
+
+### How to Answer
+
+`this` refers to the object that invokes the function.
+
+"The `this` keyword in JavaScript is tricky, especially in callbacks, because its value depends on how the function is called, not where it's defined.
+
+### Problem with regular functions as callbacks
+
+```javascript
+const user = {
+  name: 'John',
+  greet: function() {
+    console.log('Hello, ' + this.name);
+  }
+};
+
+user.greet(); // 'Hello, John' - works fine
+
+setTimeout(user.greet, 1000); // 'Hello, undefined'
+// this.name is undefined because 'this' is now window/global
+```
+
+When you pass `user.greet` to `setTimeout`, it loses its connection to `user`. The function is called without any object context, so `this` becomes the global object (or `undefined` in strict mode).
+
+### Solution 1: Arrow functions
+
+```javascript
+const user = {
+  name: 'John',
+  greet: function() {
+    setTimeout(() => {
+      console.log('Hello, ' + this.name);
+      // Arrow function doesn't have its own 'this'
+      // It uses 'this' from the outer scope (user)
+    }, 1000);
+  }
+};
+
+user.greet(); // 'Hello, John' after 1 second
+```
+
+Arrow functions don't have their own `this` - they inherit it from the surrounding scope.
+
+### Solution 2: `bind()`
+
+```javascript
+const user = {
+  name: 'John',
+  greet: function() {
+    console.log('Hello, ' + this.name);
+  }
+};
+
+setTimeout(user.greet.bind(user), 1000);
+// bind() creates a new function with 'this' permanently set to user
+```
+
+### Solution 3: Wrapper function
+
+```javascript
+setTimeout(() => user.greet(), 1000);
+// The wrapper function calls greet() on user object
+```
+
+### Solution 4: Store `this` in a variable
+
+```javascript
+const user = {
+  name: 'John',
+  greet: function() {
+    const self = this; // Store reference
+
+    setTimeout(function() {
+      console.log('Hello, ' + self.name);
+    }, 1000);
+  }
+};
+```
+
+### Event handlers
+
+```javascript
+class Button {
+  constructor(label) {
+    this.label = label;
+  }
+
+  // Problem
+  handleClick() {
+    console.log(this.label); // 'this' is the button element!
+  }
+
+  // Solution 1: Arrow function
+  handleClickArrow = () => {
+    console.log(this.label); // Correct 'this'
+  }
+
+  // Solution 2: Bind in constructor
+  constructor(label) {
+    this.label = label;
+    this.handleClick = this.handleClick.bind(this);
+  }
+}
+
+const btn = new Button('Click me');
+
+document
+  .querySelector('button')
+  .addEventListener('click', btn.handleClick);
+```
+
+### Promises and `this`
+
+```javascript
+class DataFetcher {
+  constructor() {
+    this.data = null;
+  }
+
+  // Problem
+  fetchData() {
+    fetch('/api/data')
+      .then(function(response) {
+        this.data = response; // Error! 'this' is undefined
+      });
+  }
+
+  // Solution 1: Arrow function
+  fetchData() {
+    fetch('/api/data')
+      .then(response => {
+        this.data = response; // Correct!
+      });
+  }
+
+  // Solution 2: Store this
+  fetchData() {
+    const self = this;
+
+    fetch('/api/data')
+      .then(function(response) {
+        self.data = response; // Works
+      });
+  }
+}
+```
+
+### `async/await` and `this`
+
+```javascript
+class API {
+  constructor() {
+    this.baseURL = 'https://api.example.com';
+  }
+
+  async fetchUser(id) {
+    // async functions preserve 'this' context
+    const response = await fetch(`${this.baseURL}/users/${id}`);
+    return response.json();
+  }
+
+  // But be careful when passing methods as callbacks
+  async loadUser(id) {
+    const user = await this.fetchUser(id);
+    // This works when called directly
+    // But would fail if passed as callback without binding
+  }
+}
+
+const api = new API();
+
+setTimeout(api.loadUser, 1000); // Error!
+setTimeout(() => api.loadUser(1), 1000); // Works
+setTimeout(api.loadUser.bind(api, 1), 1000); // Works
+```
+
+>General rule: Use arrow functions for callbacks when you need to preserve `this` from the outer scope. They're the modern, clean solution."
+
+
+# Modules (import/export)
+
+## Q27: What are ES6 modules and how do import/export work?
+
+### How to Answer
+
+"ES6 modules are a way to organize and share code between files. Before modules, we had to use script tags or build tools. Now JavaScript has a native module system.
+
+### Named Exports
+
+```javascript
+// math.js
+export const add = (a, b) => a + b;
+export const subtract = (a, b) => a - b;
+
+export function multiply(a, b) {
+  return a * b;
+}
+
+const divide = (a, b) => a / b;
+export { divide };
+```
+
+### Importing
+
+```javascript
+import { add, subtract, multiply } from './math.js';
+
+console.log(add(5, 3)); // 8
+```
+
+### Default Export
+
+```javascript
+// user.js
+export default class User {
+  constructor(name) {
+    this.name = name;
+  }
+}
+```
+
+Or
+
+```javascript
+const config = { theme: 'dark' };
+export default config;
+```
+
+### Importing
+
+```javascript
+import User from './user.js'; // Can name it anything
+import AppConfig from './user.js'; // Same file, different name
+```
+
+### Mixing named and default
+
+```javascript
+// api.js
+export default function fetchData() {
+  // Main function
+}
+
+export const API_URL = 'https://api.example.com';
+export const timeout = 5000;
+```
+
+### Importing
+
+```javascript
+import fetchData, { API_URL, timeout } from './api.js';
+```
+
+### Import everything as an object
+
+```javascript
+// math.js
+export const add = (a, b) => a + b;
+export const subtract = (a, b) => a - b;
+```
+
+### Importing
+
+```javascript
+import * as math from './math.js';
+
+console.log(math.add(5, 3)); // 8
+console.log(math.subtract(5, 3)); // 2
+```
+
+### Renaming imports
+
+```javascript
+import { add as addition, subtract as subtraction } from './math.js';
+
+console.log(addition(5, 3)); // 8
+```
+
+### Re-exporting
+
+```javascript
+// utils/index.js
+export { add, subtract } from './math.js';
+export { formatDate } from './date.js';
+export { default as User } from './user.js';
+```
+
+### Now can import from one place
+
+```javascript
+import { add, formatDate, User } from './utils/index.js';
+```
+
+### Dynamic imports (code splitting)
+
+```javascript
+// Load module conditionally
+async function loadModule() {
+  if (condition) {
+    const module = await import('./heavy-module.js');
+    module.doSomething();
+  }
+}
+```
+
+```javascript
+// Load on user action
+button.addEventListener('click', async () => {
+  const { default: Chart } = await import('./chart.js');
+  new Chart(data);
+});
+```
+
+### Key differences from CommonJS
+
+```javascript
+// CommonJS (Node.js)
+const module = require('./module');
+module.exports = { something };
+```
+
+```javascript
+// ES6 Modules
+import module from './module.js';
+export default { something };
+```
+
+### Important points
+
+- Static imports are hoisted - they run before any other code in the file
+- Imports are read-only - you can't reassign them
+- Imports are live bindings - if the exported value changes, imports see the change
+- Use `.js` extension in imports (browsers require it)
+- Module scope - variables in modules are private by default
+
+### Using in HTML
+
+```html
+<!-- Add type="module" to script tag -->
+<script type="module" src="app.js"></script>
+
+<!-- Inline module -->
+<script type="module">
+  import { greet } from './utils.js';
+  greet('World');
+</script>
+```
+
+>ES6 modules are now the standard way to organize JavaScript code, both in browsers and Node.js."
+
+
+# CommonJS vs ES6 Modules
+
+## Q28: What's the difference between CommonJS and ES6 modules?
+
+### How to Answer
+
+"CommonJS and ES6 modules are two different module systems. CommonJS is the older system used in Node.js, while ES6 modules are the modern JavaScript standard.
+
+### Syntax difference
+
+#### CommonJS
+
+```javascript
+const module = require('./module');
+const { specific } = require('./module');
+
+module.exports = { something };
+exports.something = value;
+```
+
+#### ES6 Modules
+
+```javascript
+import module from './module.js';
+import { specific } from './module.js';
+
+export default { something };
+export const something = value;
+```
+
+### Key differences
+
+#### 1. Loading: Synchronous vs Asynchronous
+
+CommonJS loads modules synchronously:
+
+```javascript
+const fs = require('fs'); // Blocks until loaded
+console.log('Loaded');
+```
+
+ES6 modules load asynchronously:
+
+```javascript
+import fs from 'fs'; // Non-blocking
+console.log('Loaded');
+```
+
+#### 2. Timing: Runtime vs Parse time
+
+CommonJS: Modules are loaded at runtime
+
+```javascript
+if (condition) {
+  const module = require('./module'); // Can be conditional
+}
+```
+
+ES6: Imports are static and hoisted
+
+```javascript
+if (condition) {
+  import module from './module'; // Syntax error!
+}
+```
+
+Must use dynamic import for conditional loading:
+
+```javascript
+if (condition) {
+  const module = await import('./module.js'); // Works
+}
+```
+
+#### 3. Values: Copies vs Live bindings
+
+CommonJS exports copies:
+
+```javascript
+// counter.js
+let count = 0;
+
+module.exports = {
+  count,
+  increment() {
+    count++;
+  }
+};
+
+// main.js
+const counter = require('./counter');
+
+console.log(counter.count); // 0
+counter.increment();
+console.log(counter.count); // Still 0! (copy, not live)
+```
+
+ES6 exports live bindings:
+
+```javascript
+// counter.js
+export let count = 0;
+
+export function increment() {
+  count++;
+}
+
+// main.js
+import { count, increment } from './counter.js';
+
+console.log(count); // 0
+increment();
+console.log(count); // 1 (live binding!)
+```
+
+#### 4. Tree shaking
+
+ES6 modules support tree shaking (dead code elimination):
+
+```javascript
+// With ES6 modules, bundlers can detect unused exports
+import { add } from './math.js'; // Only 'add' gets bundled
+```
+
+```javascript
+// CommonJS imports everything
+const { add } = require('./math.js'); // Whole module bundled
+```
+
+#### 5. `this` keyword
+
+CommonJS: `this` refers to `module.exports`
+
+```javascript
+console.log(this === module.exports); // true
+```
+
+ES6: `this` is `undefined` in modules
+
+```javascript
+console.log(this); // undefined
+```
+
+#### 6. File extensions
+
+CommonJS: `.js` files are CommonJS by default in Node
+
+```javascript
+require('./file'); // .js assumed
+```
+
+ES6: Needs `.mjs` or `"type": "module"` in `package.json`
+
+```javascript
+import './file.js'; // Extension required in browsers
+```
+
+### Current state in Node.js
+
+Node.js now supports both:
+
+```json
+// package.json
+{
+  "type": "module"
+}
+```
+
+```text
+// Makes .js files ES6 modules
+```
+
+Or use `.mjs` for ES6, `.cjs` for CommonJS.
+
+### Interoperability
+
+```javascript
+// Can import CommonJS in ES6
+import module from './commonjs-module.js';
+```
+
+```javascript
+// Cannot require() ES6 modules in CommonJS
+// Must use dynamic import
+const module = await import('./es6-module.js');
+```
+
+### Which to use
+
+- Frontend: Always ES6 modules
+- Node.js: ES6 modules are now recommended
+- Legacy code: Still uses CommonJS
+
+>ES6 modules are the future. They're more powerful, better optimized, and work everywhere."
+
+
+# NPM & NPX Basics
+
+## Q29: What are NPM and NPX? What's the difference?
+
+### How to Answer
+
+"NPM and NPX are both Node.js tools, but they serve different purposes.
+
+### NPM (Node Package Manager)
+
+NPM is a package manager for JavaScript. It helps you install, manage, and share code packages.
+
+### NPX (Node Package Execute)
+
+NPX is a tool for executing packages without installing them globally.
+
+### Key differences
+
+#### NPM
+
+```bash
+# Install first
+npm install -g create-react-app
+
+# Then use
+create-react-app my-app
+```
+
+#### NPX
+
+```bash
+# Execute directly without installing
+npx create-react-app my-app
+
+# Runs the latest version each time
+```
+
+### Why use NPX
+
+1. No global installations polluting your system
+2. Always use latest version
+3. Try packages without installing
+4. Run different versions
+
+### Summary
+
+- **NPM:** Package manager for installing and managing dependencies.
+- **NPX:** Package executor for running packages without installing them.
+
+>In modern workflows, you use NPM for dependencies your project needs, and NPX for one-time commands and tools."
+
+
+# Throttling & Debouncing
+
+## Q30: What is Debouncing? Implement it.
+
+### How to Answer
+
+Debouncing makes sure a function runs only after an event stops.
+
+If the event keeps happening, the function does **NOT** run.
+
+### Why we use it?
+
+- To avoid unnecessary function calls
+- To improve performance
+- To prevent multiple API calls
+
+### Common use cases
+
+- Search input - Wait for user to stop typing
+- Window resize - Recalculate layout after resizing stops
+- Form validation - Validate after user finishes input
+- Save draft - Auto-save after user stops editing
+- API calls - Reduce unnecessary requests
+
+### How Debounce Works (Logic)
+
+1. Event happens
+2. Old timer is cleared
+3. New timer starts
+4. If no new event happens → function runs
+
+### Use case: Search input that calls an API
+
+#### Without debouncing
+
+```javascript
+// User types 'hello'
+// API called: 'h'
+// API called: 'he'
+// API called: 'hel'
+// API called: 'hell'
+// API called: 'hello'
+
+// 5 unnecessary API calls!
+```
+
+#### With debouncing
+
+```javascript
+// User types 'hello'
+// Wait 300ms after last keystroke
+// API called once: 'hello'
+```
+
+### Implementation
+
+```javascript
+function debounce(func, delay) {
+  let timeoutId;
+
+  return function (...args) {
+    // Clear previous timer
+    clearTimeout(timeoutId);
+
+    // Set new timer
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
+}
+```
+
+### Usage
+
+```javascript
+// Search function
+function searchAPI(query) {
+  console.log('Searching for:', query);
+  // API call here
+}
+
+// Create debounced version
+const debouncedSearch = debounce(searchAPI, 300);
+
+// In event handler
+input.addEventListener('input', (e) => {
+  debouncedSearch(e.target.value);
+});
+
+// Now it only calls API 300ms after user stops typing
+```
+
+### Step 1: Create debounce function
+
+#### `debounce.js`
+
+```javascript
+export function debounce(callback, delay) {
+  let timer;
+
+  return function (...args) {
+    clearTimeout(timer);
+
+    timer = setTimeout(() => {
+      callback(...args);
+    }, delay);
+  };
+}
+```
+
+### Step 2: `App.jsx`
+
+```jsx
+import { useEffect, useMemo, useState } from "react";
+import { debounce } from "./debounce";
+
+function App() {
+  const [search, setSearch] = useState("");
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // API Call
+  const fetchPosts = async (searchText) => {
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/posts"
+      );
+
+      const data = await response.json();
+
+      const filteredPosts = data.filter((post) =>
+        post.title.toLowerCase().includes(searchText.toLowerCase())
+      );
+
+      setPosts(filteredPosts);
+    } catch (error) {
+      console.log(error);
+    }
+
+    setLoading(false);
+  };
+
+  // Debounced version of API call
+  const debouncedSearch = useMemo(() => {
+    return debounce(fetchPosts, 500);
+  }, []);
+
+  useEffect(() => {
+    debouncedSearch(search);
+  }, [search]);
+
+  return (
+    <div style={{ padding: "40px" }}>
+      <h1>Search Posts</h1>
+
+      <input
+        type="text"
+        placeholder="Search title..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        style={{
+          width: "400px",
+          padding: "10px",
+          fontSize: "16px",
+        }}
+      />
+
+      <br />
+      <br />
+
+      {loading && <h3>Loading...</h3>}
+
+      {!loading &&
+        posts.map((post) => (
+          <div
+            key={post.id}
+            style={{
+              border: "1px solid gray",
+              padding: "15px",
+              marginBottom: "15px",
+            }}
+          >
+            <h3>{post.title}</h3>
+            <p>{post.body}</p>
+          </div>
+        ))}
+    </div>
+  );
+}
+
+export default App;
+```
+
+
+# Throttling & Debouncing
+
+## Q31: What is Throttling? How is it different from Debouncing?
+
+### How to Answer
+
+Throttling ensures a function runs at most once in a given time interval, no matter how many times the event fires.
+
+### Difference from Debouncing
+
+#### Debouncing: "Wait until activity stops"
+
+- Only executes after quiet period
+- Good for: search, form validation, resize events
+
+#### Throttling: "Execute at regular intervals"
+
+- Executes at fixed rate
+- Good for: scroll, mouse move, continuous events
+
+### Implementation
+
+```javascript
+function throttle(func, limit) {
+  let inThrottle;
+
+  return function (...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+
+      setTimeout(() => {
+        inThrottle = false;
+      }, limit);
+    }
+  };
+}
+```
+
+### Step 1: Create Throttle Function
+
+#### `throttle.js`
+
+```javascript
+export function throttle(callback, delay) {
+  let lastCall = 0;
+
+  return function (...args) {
+    const now = Date.now();
+
+    if (now - lastCall >= delay) {
+      lastCall = now;
+      callback(...args);
+    }
+  };
+}
+```
+
+### Step 2: Infinite Scroll Example
+
+```jsx
+import { useEffect, useMemo, useState } from "react";
+import { throttle } from "./throttle";
+
+export default function App() {
+  const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch posts
+  const fetchPosts = async (pageNumber) => {
+    setLoading(true);
+
+    const response = await fetch(
+      `https://jsonplaceholder.typicode.com/posts?_page=${pageNumber}&_limit=10`
+    );
+
+    const data = await response.json();
+
+    setPosts((prev) => [...prev, ...data]);
+
+    setLoading(false);
+  };
+
+  // Initial Load
+  useEffect(() => {
+    fetchPosts(page);
+  }, []);
+
+  // Load next page
+  const loadMore = () => {
+    if (loading) return;
+
+    const reachedBottom =
+      window.innerHeight + window.scrollY >=
+      document.documentElement.scrollHeight - 100;
+
+    if (reachedBottom) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchPosts(nextPage);
+    }
+  };
+
+  // Throttle scroll handler
+  const throttledScroll = useMemo(
+    () => throttle(loadMore, 300),
+    [page, loading]
+  );
+
+  useEffect(() => {
+    window.addEventListener("scroll", throttledScroll);
+
+    return () => {
+      window.removeEventListener("scroll", throttledScroll);
+    };
+  }, [throttledScroll]);
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h1>Infinite Scroll Example</h1>
+
+      {posts.map((post) => (
+        <div
+          key={post.id}
+          style={{
+            border: "1px solid gray",
+            marginBottom: 10,
+            padding: 10,
+          }}
+        >
+          <h3>{post.title}</h3>
+          <p>{post.body}</p>
+        </div>
+      ))}
+
+      {loading && <h2>Loading...</h2>}
+    </div>
+  );
+}
+```
+
+### Common use cases
+
+#### Throttling
+
+- Infinite scroll - Load more items as user scrolls
+- Mouse tracking - Update cursor position
+- Game loop - Limit frame rate
+- Button clicks - Prevent spam clicking
+- Progress bar updates - Smooth updates without overload
+
+
+
+# Common Patterns & Best Practices
+
+## Q33: What are some async/await best practices?
+
+### How to Answer
+
+"Here are the key best practices for writing async/await code:
+
+### 1. Always handle errors with `try/catch`
+
+#### Bad
+
+```javascript
+async function fetchData() {
+  const data = await fetch('/api/data');
+  return data; // Errors will crash
+}
+```
+
+#### Good
+
+```javascript
+async function fetchData() {
+  try {
+    const data = await fetch('/api/data');
+    return data;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error; // Or handle gracefully
+  }
+}
+```
+
+### 2. Run independent operations in parallel
+
+#### Bad - Sequential (3 seconds total)
+
+```javascript
+async function loadData() {
+  const users = await fetchUsers();       // 1 sec
+  const posts = await fetchPosts();       // 1 sec
+  const comments = await fetchComments(); // 1 sec
+
+  return { users, posts, comments };
+}
+```
+
+#### Good - Parallel (1 second total)
+
+```javascript
+async function loadData() {
+  const [users, posts, comments] = await Promise.all([
+    fetchUsers(),
+    fetchPosts(),
+    fetchComments()
+  ]);
+
+  return { users, posts, comments };
+}
+```
+
+### 3. Use `Promise.allSettled` for partial failures
+
+```javascript
+async function loadDashboard() {
+  const results = await Promise.allSettled([
+    fetchUsers(),
+    fetchPosts(),
+    fetchStats()
+  ]);
+
+  const users = results[0].status === 'fulfilled' ? results[0].value : [];
+  const posts = results[1].status === 'fulfilled' ? results[1].value : [];
+  const stats = results[2].status === 'fulfilled' ? results[2].value : null;
+
+  return { users, posts, stats };
+}
+```
+
+### 4. Avoid async in array methods (`forEach`, `map`, `filter`)
+
+#### Bad - doesn't wait
+
+```javascript
+users.forEach(async (user) => {
+  await updateUser(user); // Doesn't actually wait!
+});
+```
+
+#### Good - use `for...of`
+
+```javascript
+for (const user of users) {
+  await updateUser(user);
+}
+```
+
+#### Or `Promise.all` for parallel
+
+```javascript
+await Promise.all(users.map(user => updateUser(user)));
+```
+
+### 5. Return promises directly when possible
+
+#### Unnecessary `async/await`
+
+```javascript
+async function getUser(id) {
+  return await fetch(`/api/users/${id}`);
+}
+```
+
+#### Better - just return the promise
+
+```javascript
+function getUser(id) {
+  return fetch(`/api/users/${id}`);
+}
+```
+
+#### Only use `async` if you need to await something
+
+```javascript
+async function getUser(id) {
+  const response = await fetch(`/api/users/${id}`);
+  return response.json(); // Need await here
+}
+```
+
+### 6. Use descriptive error messages
+
+```javascript
+async function fetchUser(id) {
+  try {
+    const response = await fetch(`/api/users/${id}`);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch user ${id}: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching user ${id}:`, error);
+    throw error;
+  }
+}
+```
+
+### 7. Create helper functions for repeated patterns
+
+#### Generic fetch wrapper
+
+```javascript
+async function apiRequest(url, options = {}) {
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      ...options,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('API request failed:', error);
+    throw error;
+  }
+}
+```
+
+#### Usage is much cleaner
+
+```javascript
+const user = await apiRequest('/api/users/1');
+
+const newPost = await apiRequest('/api/posts', {
+  method: 'POST',
+  body: JSON.stringify({ title: 'Hello' })
+});
+```
+
+### 8. Clean up async operations in `useEffect` (React)
+
+```javascript
+useEffect(() => {
+  let cancelled = false;
+
+  async function fetchData() {
+    try {
+      const data = await fetch('/api/data');
+
+      if (!cancelled) {
+        setData(data);
+      }
+    } catch (error) {
+      if (!cancelled) {
+        setError(error);
+      }
+    }
+  }
+
+  fetchData();
+
+  return () => {
+    cancelled = true; // Cleanup
+  };
+}, []);
+```
+
+### 9. Use timeout wrappers for reliability
+
+```javascript
+async function fetchWithTimeout(url, timeout = 5000) {
+  const controller = new AbortController();
+
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    return await response.json();
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      throw new Error('Request timeout');
+    }
+
+    throw error;
+  }
+}
+```
+
+### 10. Retry failed requests
+
+```javascript
+async function fetchWithRetry(url, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch(url);
+      return await response.json();
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+
+      // Wait before retry (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+
+      console.log(`Retry ${i + 1}/${maxRetries}`);
+    }
+  }
+}
+```
+
+Following these practices makes async code more reliable, maintainable, and performant."
+
+---
+
+# Common Async Interview Questions / Problems
+
+## Q34: What are common async interview questions/problems?
+
+### How to Answer
+
+"Here are some common async problems you might see in interviews:
+
+### 1. Implement `promiseAll`
+
+```javascript
+function promiseAll(promises) {
+  return new Promise((resolve, reject) => {
+    if (promises.length === 0) {
+      resolve([]);
+      return;
+    }
+
+    const results = [];
+    let completed = 0;
+
+    promises.forEach((promise, index) => {
+      Promise.resolve(promise)
+        .then(value => {
+          results[index] = value;
+          completed++;
+
+          if (completed === promises.length) {
+            resolve(results);
+          }
+        })
+        .catch(reject);
+    });
+  });
+}
+```
+
+#### Usage
+
+```javascript
+promiseAll([
+  Promise.resolve(1),
+  Promise.resolve(2),
+  Promise.resolve(3)
+]).then(results => console.log(results)); // [1, 2, 3]
+```
+
+### 2. Implement sequential promise execution
+
+```javascript
+async function executeSequentially(promises) {
+  const results = [];
+
+  for (const promise of promises) {
+    const result = await promise();
+    results.push(result);
+  }
+
+  return results;
+}
+```
+
+#### Usage
+
+```javascript
+const tasks = [
+  () => new Promise(resolve => setTimeout(() => resolve(1), 1000)),
+  () => new Promise(resolve => setTimeout(() => resolve(2), 500)),
+  () => new Promise(resolve => setTimeout(() => resolve(3), 1500))
+];
+
+executeSequentially(tasks).then(console.log); // [1, 2, 3] after 3 seconds total
+```
+
+### 3. Retry mechanism
+
+```javascript
+async function retry(fn, maxAttempts = 3, delay = 1000) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (attempt === maxAttempts) {
+        throw error;
+      }
+
+      console.log(`Attempt ${attempt} failed, retrying...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+}
+```
+
+#### Usage
+
+```javascript
+retry(() => fetch('/api/data'))
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('All attempts failed:', error));
+```
+
+### 4. Rate limiter
+
+```javascript
+function rateLimiter(fn, maxCalls, timeWindow) {
+  const queue = [];
+  let callsInWindow = 0;
+
+  return async function (...args) {
+    return new Promise((resolve, reject) => {
+      const execute = async () => {
+        try {
+          callsInWindow++;
+
+          const result = await fn(...args);
+          resolve(result);
+
+          setTimeout(() => {
+            callsInWindow--;
+
+            if (queue.length > 0) {
+              const next = queue.shift();
+              next();
+            }
+          }, timeWindow);
+        } catch (error) {
+          reject(error);
+        }
+      };
+
+      if (callsInWindow < maxCalls) {
+        execute();
+      } else {
+        queue.push(execute);
+      }
+    });
+  };
+}
+```
+
+#### Usage
+
+```javascript
+// Max 3 calls per second
+const limitedFetch = rateLimiter(fetch, 3, 1000);
+```
+
+### 5. Implement sleep/delay
+
+```javascript
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+```
+
+#### Usage
+
+```javascript
+async function demo() {
+  console.log('Start');
+  await sleep(2000);
+  console.log('2 seconds later');
+}
+```
+
+### 6. Race with timeout
+
+```javascript
+async function fetchWithTimeout(url, timeout) {
+  return Promise.race([
+    fetch(url),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Timeout')), timeout)
+    )
+  ]);
+}
+```
+
+#### Usage
+
+```javascript
+fetchWithTimeout('/api/data', 5000)
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error(error.message));
+```
+
+### 7. Batch requests
+
+```javascript
+async function batchRequests(items, batchSize, processFn) {
+  const results = [];
+
+  for (let i = 0; i < items.length; i += batchSize) {
+    const batch = items.slice(i, i + batchSize);
+
+    const batchResults = await Promise.all(batch.map(processFn));
+
+    results.push(...batchResults);
+  }
+
+  return results;
+}
+```
+
+#### Usage
+
+```javascript
+const items = Array.from({ length: 100 }, (_, i) => i);
+
+const results = await batchRequests(
+  items,
+  10,
+  async (item) => {
+    return await fetch(`/api/item/${item}`).then(r => r.json());
+  }
+);
+```
+
+### 8. Debounced async function
+
+```javascript
+function debounceAsync(fn, delay) {
+  let timeoutId;
+  let pendingPromise = null;
+
+  return function (...args) {
+    clearTimeout(timeoutId);
+
+    if (pendingPromise) {
+      // Cancel previous promise
+      pendingPromise = null;
+    }
+
+    return new Promise((resolve, reject) => {
+      timeoutId = setTimeout(async () => {
+        try {
+          const result = await fn(...args);
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      }, delay);
+    });
+  };
+}
+```
+
+### 9. Implement `Promise.race`
+
+```javascript
+function promiseRace(promises) {
+  return new Promise((resolve, reject) => {
+    promises.forEach(promise => {
+      Promise.resolve(promise)
+        .then(resolve)
+        .catch(reject);
+    });
+  });
+}
+```
+
+### 10. Parallel execution with limit
+
+```javascript
+async function parallelLimit(tasks, limit) {
+  const results = [];
+  const executing = [];
+
+  for (const [index, task] of tasks.entries()) {
+    const promise = Promise.resolve().then(() => task());
+
+    results[index] = promise;
+
+    if (limit <= tasks.length) {
+      const e = promise.then(() => {
+        executing.splice(executing.indexOf(e), 1);
+      });
+
+      executing.push(e);
+
+      if (executing.length >= limit) {
+        await Promise.race(executing);
+      }
+    }
+  }
+
+  return Promise.all(results);
+}
+```
+
+#### Usage
+
+```javascript
+const tasks = Array.from({ length: 10 }, (_, i) =>
+  () => new Promise(resolve => setTimeout(() => resolve(i), 1000))
+);
+
+parallelLimit(tasks, 3).then(console.log);
+```
+
+These problems test your understanding of promises, async/await, concurrency, and error handling. Practice implementing them from scratch!"
