@@ -1037,3 +1037,716 @@ fetch('/api/user')
 > "Promise chaining is much cleaner than callback hell, but async/await makes it even cleaner." :contentReference[oaicite:34]{index=34}
 
 
+# async/await
+
+## Q16: What is async/await and how does it work?
+
+### How to Answer
+
+"async/await is syntactic sugar built on top of promises that makes asynchronous code look and behave more like synchronous code. It makes async code easier to read and write.
+
+When JavaScript encounters `await`, it pauses the execution of that async function, not the main thread.
+
+Internally, the awaited value is wrapped using `Promise.resolve()`, and the remaining code is converted into a Promise continuation and placed in the microtask queue.
+
+Once the Promise settles and the call stack is empty, the event loop picks the microtask and resumes execution.
+
+This makes asynchronous code look synchronous while still being non-blocking."
+
+### The `async` keyword
+
+Declares that a function returns a promise:
+
+```javascript
+async function getData() {
+  return 'Hello'; // Automatically wrapped in Promise.resolve()
+}
+```
+
+Equivalent to:
+
+```javascript
+function getData() {
+  return Promise.resolve('Hello');
+}
+```
+
+Usage:
+
+```javascript
+getData().then(value => console.log(value)); // 'Hello'
+```
+
+### The `await` keyword
+
+Pauses execution until a promise resolves:
+
+```javascript
+async function fetchUser() {
+  const response = await fetch('/api/user');
+  const user = await response.json();
+  return user;
+}
+```
+
+This is much cleaner than the promise chain equivalent:
+
+```javascript
+function fetchUser() {
+  return fetch('/api/user')
+    .then(response => response.json())
+    .then(user => user);
+}
+```
+
+
+# Q17: What are common mistakes with async/await?
+
+## How to Answer
+
+"There are several common mistakes people make with async/await:
+
+### Mistake 1: Forgetting `await`
+
+### Mistake 2: Using `await` in loops (making things sequential when they could be parallel)
+
+### Mistake 3: Not handling errors
+
+### Mistake 4: Using `async` when not needed
+
+### Mistake 5: Not awaiting in `forEach`
+
+### Mistake 6: Top-level `await` in wrong context"
+
+
+# Error Handling in Async Code
+
+## Q18: How do you handle errors in Promises?
+
+### How to Answer
+
+"There are several ways to handle errors in promises:
+
+### Method 1: Using `.catch()`
+
+```javascript
+fetch('/api/user')
+  .then(response => response.json())
+  .then(user => console.log(user))
+  .catch(error => {
+    console.error('Something went wrong:', error);
+  });
+```
+
+The `.catch()` will catch any error that occurs in any of the `.then()` blocks above it.
+
+### Method 2: Using `.finally()` for cleanup
+
+```javascript
+let loading = true;
+
+fetch('/api/user')
+  .then(response => response.json())
+  .then(user => {
+    console.log(user);
+    loading = false;
+  })
+  .catch(error => {
+    console.error(error);
+    loading = false;
+  })
+  .finally(() => {
+    // This runs whether success or failure
+    console.log('Request completed');
+  });
+```
+
+# Error Handling in Async Code
+
+## Q19: How do you handle errors with async/await?
+
+### How to Answer
+
+"With async/await, we use `try/catch` blocks - just like regular synchronous code:
+
+### Basic `try/catch`
+
+```javascript
+async function fetchUser() {
+  try {
+    const response = await fetch('/api/user');
+    const user = await response.json();
+    return user;
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    throw error; // Re-throw if you want caller to handle it
+  }
+}
+```
+
+### Handling specific errors
+
+```javascript
+async function fetchUser(id) {
+  try {
+    const response = await fetch(`/api/users/${id}`);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new Error('User not found');
+      } else if (response.status === 500) {
+        throw new Error('Server error');
+      }
+    }
+
+    const user = await response.json();
+    return user;
+  } catch (error) {
+    if (error.message === 'User not found') {
+      console.error('No such user');
+      return null;
+    } else if (error.name === 'TypeError') {
+      console.error('Network error');
+      return null;
+    } else {
+      console.error('Unexpected error:', error);
+      throw error;
+    }
+  }
+}
+```
+
+
+# fetch API
+
+## Q20: How does the fetch API work?
+
+### How to Answer
+
+"The fetch API is a modern way to make HTTP requests in JavaScript. It returns a Promise that resolves to a Response object.
+
+### Basic GET request
+
+```javascript
+fetch('https://api.example.com/users')
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error));
+```
+
+### With `async/await`
+
+```javascript
+async function getUsers() {
+  try {
+    const response = await fetch('https://api.example.com/users');
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+```
+
+### Important: `fetch` only rejects on network errors, not HTTP errors
+
+```javascript
+async function fetchUser() {
+  const response = await fetch('/api/user');
+
+  // This is a 404 error, but fetch doesn't reject!
+  // You need to check response.ok
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const user = await response.json();
+  return user;
+}
+```
+
+
+
+# Event Loop
+
+## Q21: What is the Event Loop and how does it work?
+
+### How to Answer
+
+It is concept of java script runtime.
+
+The event loop is a mechanism in JavaScript that manages the execution of synchronous and asynchronous code. It continuously checks the call stack, processes microtasks first, then task que (macrotasks), allowing JavaScript to perform non-blocking operations efficiently despite being single-threaded. It's what makes asynchronous code possible.
+
+### Here's how it works
+
+### Components of the event loop
+
+- **Call Stack** - Where JavaScript executes code
+- **Web APIs** - Browser-provided APIs (`setTimeout`, `fetch`, DOM events)
+- **Callback Queue (Task Queue)** - Where callbacks wait
+- **Microtask Queue** - Priority queue for promises
+- **Event Loop** - Checks if call stack is empty and moves tasks from queues
+
+### The process
+
+```javascript
+console.log('Start');
+
+setTimeout(() => {
+  console.log('Timeout');
+}, 0);
+
+Promise.resolve().then(() => {
+  console.log('Promise');
+});
+
+console.log('End');
+
+// Output: Start, End, Promise, Timeout
+```
+
+### Let me explain what happens step by step
+
+1. Step 1: `console.log('Start')` executes → prints `'Start'`
+
+2. Step 2: `setTimeout` is called → callback goes to Web API, which starts timer
+
+3. Step 3: `Promise.resolve().then()` is called → callback goes to Microtask Queue
+
+4. Step 4: `console.log('End')` executes → prints `'End'`
+
+5. Step 5: Call stack is now empty, event loop checks queues
+
+6. Step 6: Microtask queue has priority → Promise callback executes → prints `'Promise'`
+
+7. Step 7: Timer completes → `setTimeout` callback moves from Web API to Callback Queue
+
+8. Step 8: Event loop moves `setTimeout` callback to call stack → prints `'Timeout'`
+
+### Visual representation
+
+```text
+Call Stack: [Currently executing code]
+       ↓
+  Is empty?
+       ↓
+Microtask Queue: [Promise callbacks] ← Higher priority
+       ↓
+Callback Queue: [setTimeout, events] ← Lower priority
+       ↓
+Back to Call Stack
+```
+
+### Why this order matters
+
+```javascript
+setTimeout(() => console.log('1'), 0);
+
+Promise.resolve()
+  .then(() => console.log('2'))
+  .then(() => console.log('3'));
+
+setTimeout(() => console.log('4'), 0);
+
+// Output: 2, 3, 1, 4
+// All promise callbacks run before any setTimeout
+```
+
+
+
+# Event Loop
+
+## Q22: Can you explain the event loop with a diagram or step-by-step example?
+
+### How to Answer
+
+"Let me walk through a concrete example step by step:
+
+```javascript
+console.log('A');
+
+setTimeout(() => {
+  console.log('B');
+}, 0);
+
+Promise.resolve().then(() => {
+  console.log('C');
+});
+
+console.log('D');
+```
+
+### Step-by-step breakdown
+
+#### Initial State
+
+```text
+Call Stack: []
+Microtask Queue: []
+Callback Queue: []
+```
+
+#### Step 1: Execute `console.log('A')`
+
+```text
+Call Stack: [console.log('A')]
+Output: 'A'
+Call Stack: [] (after execution)
+```
+
+#### Step 2: Execute `setTimeout`
+
+- `setTimeout` is called
+- Web API starts `0ms` timer
+- Callback moves to Web API, waiting for timer
+
+```text
+Call Stack: [] (setTimeout itself finishes immediately)
+```
+
+#### Step 3: Execute `Promise.resolve().then()`
+
+- Promise is already resolved
+- Callback goes to Microtask Queue
+
+```text
+Call Stack: []
+Microtask Queue: [() => console.log('C')]
+```
+
+#### Step 4: Execute `console.log('D')`
+
+```text
+Call Stack: [console.log('D')]
+Output: 'D'
+Call Stack: [] (after execution)
+```
+
+#### Step 5: Call stack is empty - Event loop checks Microtask Queue
+
+- Microtask Queue has callback from Promise
+- Move to call stack and execute
+
+```text
+Call Stack: [() => console.log('C')]
+Output: 'C'
+Call Stack: []
+Microtask Queue: []
+```
+
+#### Step 6: Timer completes (`0ms`)
+
+- Callback moves from Web API to Callback Queue
+
+```text
+Callback Queue: [() => console.log('B')]
+```
+
+#### Step 7: Call stack empty, Microtask queue empty - Check Callback Queue
+
+- Move `setTimeout` callback to call stack
+
+```text
+Call Stack: [() => console.log('B')]
+Output: 'B'
+Call Stack: []
+```
+
+### Final output
+
+```text
+A
+D
+C
+B
+```
+
+# Microtasks vs Macrotasks
+
+## Q23: What's the difference between Microtasks and Macrotasks?
+
+### How to Answer
+
+"Microtasks and macrotasks are two different types of asynchronous tasks in JavaScript, and they have different priorities in the event loop.
+
+### Macrotasks (Task Queue)
+
+- `setTimeout` callbacks
+- `setInterval` callbacks
+- `setImmediate` (Node.js)
+- I/O operations
+- UI rendering
+
+### Microtasks (Microtask Queue)
+
+- Promise callbacks (`.then`, `.catch`, `.finally`)
+- `async/await`
+- `queueMicrotask()`
+- `MutationObserver` callbacks
+
+### The key difference is priority
+
+After each macrotask, ALL microtasks are processed before the next macrotask runs."
+
+
+
+
+# Global Execution Context
+
+## Q24: What is the Global Execution Context?
+
+### How to Answer
+
+"The Global Execution Context is the environment where your JavaScript code runs. When your code first starts executing, JavaScript creates the global execution context.
+
+Think of it as the 'default' or 'base' environment for your code. Every JavaScript program has one global execution context.
+
+### What happens when Global Execution Context is created
+
+#### Phase 1: Creation Phase
+
+- Creates the global object (`window` in browsers, `global` in Node.js)
+- Sets up memory for variables and functions (hoisting)
+- Initializes variables to `undefined`
+- Stores function declarations in memory
+
+#### Phase 2: Execution Phase
+
+- Executes code line by line
+- Assigns values to variables
+- Executes function calls (creates new execution contexts)
+
+### Example
+
+```javascript
+var name = 'John';
+
+function greet() {
+  console.log('Hello ' + name);
+}
+
+greet();
+```
+
+### During Creation Phase
+
+- `name` is stored in memory and initialized to `undefined`
+- `greet` function is stored in memory with its entire definition
+- Global object (`window`) is created
+
+### During Execution Phase
+
+- Line 1: `name` is assigned `'John'`
+- Line 3-5: `greet` function definition (already in memory, nothing to do)
+- Line 7: `greet()` is called → New execution context created for `greet`
+
+### Global vs Function Execution Context
+
+```javascript
+var globalVar = 'global';
+
+function outer() {
+  var outerVar = 'outer';
+
+  function inner() {
+    var innerVar = 'inner';
+    console.log(globalVar, outerVar, innerVar);
+  }
+
+  inner();
+}
+
+outer();
+```
+
+### Execution contexts created
+
+1. Global Execution Context (has `globalVar`)
+2. `outer()` Execution Context (has `outerVar`)
+3. `inner()` Execution Context (has `innerVar`)
+
+Each execution context has access to its own variables plus all outer contexts (scope chain).
+
+### Global Object
+
+#### In browsers
+
+```javascript
+var globalVar = 'test';
+
+console.log(window.globalVar); // 'test'
+console.log(globalVar); // 'test'
+
+// var creates properties on global object
+```
+
+### With `let`/`const`
+
+```javascript
+let notOnWindow = 'test';
+
+console.log(window.notOnWindow); // undefined
+console.log(notOnWindow); // 'test'
+
+// let/const don't create properties on global object
+```
+
+### `this` in Global Context
+
+```javascript
+console.log(this); // window (in browsers)
+
+function regularFunction() {
+  console.log(this); // window (in non-strict mode)
+}
+
+const arrowFunction = () => {
+  console.log(this); // window (inherits from global)
+};
+```
+
+The global execution context is the foundation of JavaScript's execution environment. Everything starts here."
+
+
+# Closures in Async Context
+
+## Q25: How do closures work with asynchronous code?
+
+### How to Answer
+
+A closure is created when a function “remembers” variables from its lexical scope even after the outer function has finished execution.
+
+- JavaScript closures provide data privacy without classes.
+- Closures allow encapsulation by hiding variables from the outside world.
+- Closures prevent garbage collection of variables they reference.
+
+```javascript
+function outer() {
+  let count = 0;
+
+  function inner() {
+    count++;
+    console.log(count);
+  }
+
+  return inner;
+}
+
+const fn = outer();
+
+fn(); // 1
+fn(); // 2
+```
+
+### Common interview question - Loop with `setTimeout`
+
+#### Problem: What does this print?
+
+```javascript
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => {
+    console.log(i);
+  }, 1000);
+}
+
+// Output: 3, 3, 3 (all print 3!)
+```
+
+Why?
+
+Because `var` is function-scoped, all three callbacks reference the same `i`. By the time they execute, the loop has finished and `i` is `3`.
+
+### Solution 1: Use `let` (block-scoped)
+
+```javascript
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => {
+    console.log(i);
+  }, 1000);
+}
+
+// Output: 0, 1, 2
+```
+
+With `let`, each iteration creates a new block scope with its own `i`.
+
+### Solution 2: Use IIFE (Immediately Invoked Function Expression)
+
+```javascript
+for (var i = 0; i < 3; i++) {
+  (function(j) {
+    setTimeout(() => {
+      console.log(j);
+    }, 1000);
+  })(i);
+}
+
+// Output: 0, 1, 2
+```
+
+The IIFE creates a new scope for each iteration, capturing the current value of `i` as `j`.
+
+### Solution 3: Pass parameter to `setTimeout`
+
+```javascript
+for (var i = 0; i < 3; i++) {
+  setTimeout((i) => {
+    console.log(i);
+  }, 1000, i); // Third argument passes i to callback
+}
+
+// Output: 0, 1, 2
+```
+
+### Closures with event handlers
+
+```javascript
+function createButtons() {
+  for (let i = 0; i < 3; i++) {
+    const button = document.createElement('button');
+    button.textContent = `Button ${i}`;
+
+    button.addEventListener('click', () => {
+      console.log(`Button ${i} clicked`); // Closure captures i
+    });
+
+    document.body.appendChild(button);
+  }
+}
+```
+
+Each event handler has its own closure capturing its respective `i` value.
+
+### Practical async example
+
+```javascript
+function fetchUserData(userId) {
+  const startTime = Date.now();
+
+  return fetch(`/api/users/${userId}`)
+    .then(response => response.json())
+    .then(user => {
+      const elapsed = Date.now() - startTime;
+      console.log(`Fetched ${user.name} in ${elapsed}ms`);
+      // Closure allows access to startTime and userId
+      return user;
+    });
+}
+```
+
+### Memory consideration
+
+```javascript
+function createHeavyCallback() {
+  const hugeArray = new Array(1000000).fill('data');
+
+  setTimeout(() => {
+    console.log('Done');
+    // Closure keeps hugeArray in memory even though we don't use it!
+  }, 1000);
+}
+```
+
+ > Be careful - closures keep all outer scope variables in memory, even if unused. This can cause memory leaks with large data.
+>Closures are fundamental to JavaScript and essential for understanding how async callbacks work.
