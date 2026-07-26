@@ -1620,6 +1620,9 @@ A closure is created when a function “remembers” variables from its lexical 
 - JavaScript closures provide data privacy without classes.
 - Closures allow encapsulation by hiding variables from the outside world.
 - Closures prevent garbage collection of variables they reference.
+- JavaScript closures provide data privacy without classes.
+- Closures allow encapsulation by hiding variables from the outside world.
+- Closures prevent garbage collection of variables they reference
 
 ```javascript
 function outer() {
