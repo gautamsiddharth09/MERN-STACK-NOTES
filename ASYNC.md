@@ -3274,5 +3274,4 @@ const tasks = Array.from({ length: 10 }, (_, i) =>
 
 parallelLimit(tasks, 3).then(console.log);
 ```
-
-These problems test your understanding of promises, async/await, concurrency, and error handling. Practice implementing them from scratch!"
+>These problems test your understanding of promises, async/await, concurrency, and error handling. Practice implementing them from scratch!"
