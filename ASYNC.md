@@ -18,10 +18,7 @@
 16. Modules (import/export)
 17. NPM & NPX Basics
 18. Throttling & Debouncing
-19. AbortController
-20. Common Patterns & Best Practices
-
-
+19. Common Patterns & Best Practices
 
 # Introduction to Async JavaScript
 
@@ -60,9 +57,9 @@
 > For example:"
 
 ```javascript
-console.log('First');
-console.log('Second');
-console.log('Third');
+console.log("First");
+console.log("Second");
+console.log("Third");
 ```
 
 > "These will always execute in order - First, Second, Third - because JavaScript processes them one by one on a single thread.
@@ -70,7 +67,6 @@ console.log('Third');
 > However, this doesn't mean JavaScript can't handle multiple operations. The browser provides Web APIs that run outside of JavaScript's single thread - things like setTimeout, fetch, DOM events. These operations happen in the background, and when they're done, their callbacks are queued up to be executed on the main thread.
 >
 > So JavaScript itself is single-threaded, but it works in an environment (the browser or Node.js) that provides multi-threading capabilities for certain operations. The event loop coordinates everything to make it seem like multiple things are happening at once, even though JavaScript code itself only runs one thing at a time."
-
 
 # Call Stack & Synchronous Execution
 
@@ -86,17 +82,17 @@ console.log('Third');
 
 ```javascript
 function third() {
-  console.log('Third function');
+  console.log("Third function");
 }
 
 function second() {
   third();
-  console.log('Second function');
+  console.log("Second function");
 }
 
 function first() {
   second();
-  console.log('First function');
+  console.log("First function");
 }
 
 first();
@@ -148,7 +144,7 @@ recurse(); // Error: Maximum call stack size exceeded
 
 ```javascript
 while (true) {
-  console.log('Loop');
+  console.log("Loop");
 }
 ```
 
@@ -168,7 +164,6 @@ countdown(5); // Works fine
 
 > "Now the recursion has an exit condition, so the stack doesn't grow infinitely."
 
-
 # setTimeout & setInterval
 
 ## Q5: How does setTimeout work?
@@ -184,13 +179,13 @@ setTimeout(callback, delay);
 > "For example:"
 
 ```javascript
-console.log('Start');
+console.log("Start");
 
 setTimeout(() => {
-  console.log('This runs after 2 seconds');
+  console.log("This runs after 2 seconds");
 }, 2000);
 
-console.log('End');
+console.log("End");
 ```
 
 > "The output will be:"
@@ -218,13 +213,13 @@ This runs after 2 seconds
 
 ```javascript
 setTimeout(() => {
-  console.log('Should run after 0ms');
+  console.log("Should run after 0ms");
 }, 0);
 
 // Some heavy operation
 for (let i = 0; i < 1000000000; i++) {}
 
-console.log('Heavy operation done');
+console.log("Heavy operation done");
 ```
 
 > "Even with 0ms delay, the setTimeout callback runs after the loop finishes because the loop blocks the call stack."
@@ -241,7 +236,7 @@ console.log('Heavy operation done');
 
 ```javascript
 setTimeout(() => {
-  console.log('Runs once after 2 seconds');
+  console.log("Runs once after 2 seconds");
 }, 2000);
 ```
 
@@ -249,7 +244,7 @@ setTimeout(() => {
 
 ```javascript
 setInterval(() => {
-  console.log('Runs every 2 seconds');
+  console.log("Runs every 2 seconds");
 }, 2000);
 ```
 
@@ -257,13 +252,13 @@ setInterval(() => {
 
 ```javascript
 const intervalId = setInterval(() => {
-  console.log('Tick');
+  console.log("Tick");
 }, 1000);
 
 // Stop after 5 seconds
 setTimeout(() => {
   clearInterval(intervalId);
-  console.log('Interval stopped');
+  console.log("Interval stopped");
 }, 5000);
 ```
 
@@ -297,15 +292,16 @@ repeatTask();
 ### How to Answer:
 
 > "setTimeout with 0 delay doesn't execute immediately - it defers the callback until after the current call stack is clear."
+> "So setTimeout(0) is a way to say 'do this, but let everything else in the current stack finish first.'"
 
 ```javascript
-console.log('1');
+console.log("1");
 
 setTimeout(() => {
-  console.log('2');
+  console.log("2");
 }, 0);
 
-console.log('3');
+console.log("3");
 
 // Output: 1, 3, 2
 ```
@@ -316,13 +312,15 @@ console.log('3');
 >
 > Use case 1: Breaking up long-running tasks"
 
+> "This allows the browser to handle other tasks between chunks, keeping the UI responsive.
+
 ```javascript
 function processLargeArray(array) {
   // Process in chunks to avoid blocking
   const chunk = array.splice(0, 100);
 
   // Process this chunk
-  chunk.forEach(item => processItem(item));
+  chunk.forEach((item) => processItem(item));
 
   // If more items, schedule next chunk
   if (array.length > 0) {
@@ -331,35 +329,24 @@ function processLargeArray(array) {
 }
 ```
 
-> "This allows the browser to handle other tasks between chunks, keeping the UI responsive.
+
 >
 > Use case 2: Deferring code until DOM is ready"
 
 ```javascript
 // Sometimes you need to ensure DOM has updated
-element.style.display = 'block';
+element.style.display = "block";
 
 setTimeout(() => {
   // This runs after the browser has painted the change
-  element.style.opacity = '1';
+  element.style.opacity = "1";
 }, 0);
 ```
 
 > "Use case 3: Changing execution order"
 
-```javascript
-function doSomething() {
-  console.log('Inside function');
-}
 
-console.log('Before');
-setTimeout(doSomething, 0);
-console.log('After');
 
-// Output: Before, After, Inside function
-```
-
-> "So setTimeout(0) is a way to say 'do this, but let everything else in the current stack finish first.'"
 
 # Callbacks & Callback Hell
 
@@ -373,15 +360,15 @@ console.log('After');
 
 ```javascript
 function greet(name, callback) {
-  console.log('Hello ' + name);
+  console.log("Hello " + name);
   callback();
 }
 
 function sayGoodbye() {
-  console.log('Goodbye!');
+  console.log("Goodbye!");
 }
 
-greet('John', sayGoodbye);
+greet("John", sayGoodbye);
 
 // Output:
 // Hello John
@@ -392,15 +379,15 @@ greet('John', sayGoodbye);
 
 ```javascript
 // Reading a file (async operation)
-readFile('data.txt', function(error, data) {
+readFile("data.txt", function (error, data) {
   if (error) {
-    console.log('Error reading file');
+    console.log("Error reading file");
   } else {
-    console.log('File content:', data);
+    console.log("File content:", data);
   }
 });
 
-console.log('This runs before the file is read');
+console.log("This runs before the file is read");
 ```
 
 > "Here, the callback function is called once the file reading is complete. Meanwhile, JavaScript continues executing other code.
@@ -410,7 +397,7 @@ console.log('This runs before the file is read');
 > Synchronous callbacks - Execute immediately:"
 
 ```javascript
-[1, 2, 3].forEach(function(num) {
+[1, 2, 3].forEach(function (num) {
   console.log(num); // Runs immediately for each item
 });
 ```
@@ -418,8 +405,8 @@ console.log('This runs before the file is read');
 > "Asynchronous callbacks - Execute later:"
 
 ```javascript
-setTimeout(function() {
-  console.log('Runs after 1 second'); // Runs later
+setTimeout(function () {
+  console.log("Runs after 1 second"); // Runs later
 }, 1000);
 ```
 
@@ -436,12 +423,12 @@ setTimeout(function() {
 > Here's an example:"
 
 ```javascript
-getData(function(a) {
-  getMoreData(a, function(b) {
-    getMoreData(b, function(c) {
-      getMoreData(c, function(d) {
-        getMoreData(d, function(e) {
-          console.log('Finally done!');
+getData(function (a) {
+  getMoreData(a, function (b) {
+    getMoreData(b, function (c) {
+      getMoreData(c, function (d) {
+        getMoreData(d, function (e) {
+          console.log("Finally done!");
         });
       });
     });
@@ -473,9 +460,9 @@ function step2(data, callback) {
   callback(null, processedData);
 }
 
-step1(initialData, function(err, result1) {
+step1(initialData, function (err, result1) {
   if (err) return handleError(err);
-  step2(result1, function(err, result2) {
+  step2(result1, function (err, result2) {
     if (err) return handleError(err);
     // Continue...
   });
@@ -489,11 +476,11 @@ getData()
   .then(getMoreData)
   .then(getMoreData)
   .then(getMoreData)
-  .then(result => {
-    console.log('Done!', result);
+  .then((result) => {
+    console.log("Done!", result);
   })
-  .catch(error => {
-    console.log('Error:', error);
+  .catch((error) => {
+    console.log("Error:", error);
   });
 ```
 
@@ -506,15 +493,14 @@ async function fetchData() {
     const b = await getMoreData(a);
     const c = await getMoreData(b);
     const d = await getMoreData(c);
-    console.log('Done!', d);
+    console.log("Done!", d);
   } catch (error) {
-    console.log('Error:', error);
+    console.log("Error:", error);
   }
 }
 ```
 
 > "Modern JavaScript strongly favors promises and async/await over nested callbacks because they make async code look and behave more like synchronous code."
-
 
 # Promises
 
@@ -539,9 +525,9 @@ const myPromise = new Promise((resolve, reject) => {
     const success = true;
 
     if (success) {
-      resolve('Operation successful!'); // Fulfilled
+      resolve("Operation successful!"); // Fulfilled
     } else {
-      reject('Operation failed!'); // Rejected
+      reject("Operation failed!"); // Rejected
     }
   }, 1000);
 });
@@ -551,10 +537,10 @@ const myPromise = new Promise((resolve, reject) => {
 
 ```javascript
 myPromise
-  .then(result => {
+  .then((result) => {
     console.log(result); // Runs if fulfilled
   })
-  .catch(error => {
+  .catch((error) => {
     console.log(error); // Runs if rejected
   });
 ```
@@ -588,9 +574,9 @@ function fetchUserData(userId) {
     // Simulate API call
     setTimeout(() => {
       if (userId > 0) {
-        resolve({ id: userId, name: 'John' });
+        resolve({ id: userId, name: "John" });
       } else {
-        reject('Invalid user ID');
+        reject("Invalid user ID");
       }
     }, 1000);
   });
@@ -601,15 +587,15 @@ function fetchUserData(userId) {
 
 ```javascript
 fetchUserData(1)
-  .then(user => {
-    console.log('User:', user);
+  .then((user) => {
+    console.log("User:", user);
     return user.name; // Can return value for next .then()
   })
-  .then(name => {
-    console.log('User name:', name);
+  .then((name) => {
+    console.log("User name:", name);
   })
-  .catch(error => {
-    console.log('Error:', error);
+  .catch((error) => {
+    console.log("Error:", error);
   });
 ```
 
@@ -617,10 +603,10 @@ fetchUserData(1)
 
 ```javascript
 fetchUserData(1)
-  .then(user => console.log(user))
-  .catch(error => console.log(error))
+  .then((user) => console.log(user))
+  .catch((error) => console.log(error))
   .finally(() => {
-    console.log('Cleanup - runs whether success or failure');
+    console.log("Cleanup - runs whether success or failure");
   });
 ```
 
@@ -628,17 +614,16 @@ fetchUserData(1)
 
 ```javascript
 function delay(ms) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
 
 // Usage
-console.log('Start');
-delay(2000)
-  .then(() => {
-    console.log('2 seconds later');
-  });
+console.log("Start");
+delay(2000).then(() => {
+  console.log("2 seconds later");
+});
 ```
 
 > "Key patterns:
@@ -661,30 +646,30 @@ delay(2000)
 > Promise.resolve() - Creates a promise that's immediately fulfilled with a value:" :contentReference[oaicite:8]{index=8}
 
 ```javascript
-const promise = Promise.resolve('Hello');
+const promise = Promise.resolve("Hello");
 
-promise.then(value => {
+promise.then((value) => {
   console.log(value); // 'Hello'
 });
 
 // Equivalent to:
-const promise = new Promise(resolve => {
-  resolve('Hello');
+const promise = new Promise((resolve) => {
+  resolve("Hello");
 });
 ```
 
 > "Promise.reject() - Creates a promise that's immediately rejected with a reason:" :contentReference[oaicite:9]{index=9}
 
 ```javascript
-const promise = Promise.reject('Something went wrong');
+const promise = Promise.reject("Something went wrong");
 
-promise.catch(error => {
+promise.catch((error) => {
   console.log(error); // 'Something went wrong'
 });
 
 // Equivalent to:
 const promise = new Promise((resolve, reject) => {
-  reject('Something went wrong');
+  reject("Something went wrong");
 });
 ```
 
@@ -708,7 +693,7 @@ getData(Promise.resolve(42)).then(console.log); // 42
 ```javascript
 function validateUser(user) {
   if (!user.email) {
-    return Promise.reject('Email is required');
+    return Promise.reject("Email is required");
   }
   return Promise.resolve(user);
 }
@@ -729,16 +714,16 @@ function validateUser(user) {
 > Basic usage:" :contentReference[oaicite:13]{index=13}
 
 ```javascript
-const promise1 = fetch('/api/users');
-const promise2 = fetch('/api/posts');
-const promise3 = fetch('/api/comments');
+const promise1 = fetch("/api/users");
+const promise2 = fetch("/api/posts");
+const promise3 = fetch("/api/comments");
 
 Promise.all([promise1, promise2, promise3])
   .then(([users, posts, comments]) => {
-    console.log('All data loaded:', users, posts, comments);
+    console.log("All data loaded:", users, posts, comments);
   })
-  .catch(error => {
-    console.log('One of the requests failed:', error);
+  .catch((error) => {
+    console.log("One of the requests failed:", error);
   });
 ```
 
@@ -758,12 +743,12 @@ async function loadDashboard() {
     const [user, settings, notifications] = await Promise.all([
       fetchUser(),
       fetchSettings(),
-      fetchNotifications()
+      fetchNotifications(),
     ]);
 
     renderDashboard({ user, settings, notifications });
   } catch (error) {
-    showError('Failed to load dashboard');
+    showError("Failed to load dashboard");
   }
 }
 ```
@@ -773,13 +758,13 @@ async function loadDashboard() {
 ```javascript
 const promises = [
   Promise.resolve(1),
-  Promise.reject('Error'),
-  Promise.resolve(3)
+  Promise.reject("Error"),
+  Promise.resolve(3),
 ];
 
 Promise.all(promises)
-  .then(results => console.log(results))
-  .catch(error => console.log(error)); // 'Error'
+  .then((results) => console.log(results))
+  .catch((error) => console.log(error)); // 'Error'
 
 // We never get results for promise 1 and 3!
 ```
@@ -791,8 +776,8 @@ Promise.all(promises)
 > Instead of this (sequential):" :contentReference[oaicite:16]{index=16}
 
 ```javascript
-const user = await fetchUser();      // 1 second
-const posts = await fetchPosts();    // 1 second
+const user = await fetchUser(); // 1 second
+const posts = await fetchPosts(); // 1 second
 const comments = await fetchComments(); // 1 second
 // Total: 3 seconds
 ```
@@ -803,7 +788,7 @@ const comments = await fetchComments(); // 1 second
 const [user, posts, comments] = await Promise.all([
   fetchUser(),
   fetchPosts(),
-  fetchComments()
+  fetchComments(),
 ]);
 // Total: 1 second (all run at once)
 ```
@@ -822,10 +807,10 @@ const [user, posts, comments] = await Promise.all([
 
 ```javascript
 Promise.all([promise1, promise2, promise3])
-  .then(results => {
+  .then((results) => {
     // All succeeded - results is array of all values
   })
-  .catch(error => {
+  .catch((error) => {
     // Any one failed - error is the first rejection
   });
 ```
@@ -836,10 +821,10 @@ Promise.all([promise1, promise2, promise3])
 
 ```javascript
 Promise.race([promise1, promise2, promise3])
-  .then(result => {
+  .then((result) => {
     // First one to finish - result is from the fastest
   })
-  .catch(error => {
+  .catch((error) => {
     // First one to fail - error from the fastest
   });
 ```
@@ -848,30 +833,27 @@ Promise.race([promise1, promise2, promise3])
 
 ```javascript
 Promise.race([
-  fetch('/api/data'),
-  new Promise((_, reject) =>
-    setTimeout(() => reject('Timeout'), 5000)
-  )
+  fetch("/api/data"),
+  new Promise((_, reject) => setTimeout(() => reject("Timeout"), 5000)),
 ]);
 ```
 
 > "Promise.allSettled() - Waits for ALL promises to settle, never rejects:" :contentReference[oaicite:22]{index=22}
 
 ```javascript
-Promise.allSettled([promise1, promise2, promise3])
-  .then(results => {
-    // Always succeeds - results is array of objects:
-    // { status: 'fulfilled', value: ... }
-    // { status: 'rejected', reason: ... }
+Promise.allSettled([promise1, promise2, promise3]).then((results) => {
+  // Always succeeds - results is array of objects:
+  // { status: 'fulfilled', value: ... }
+  // { status: 'rejected', reason: ... }
 
-    results.forEach(result => {
-      if (result.status === 'fulfilled') {
-        console.log('Success:', result.value);
-      } else {
-        console.log('Failed:', result.reason);
-      }
-    });
+  results.forEach((result) => {
+    if (result.status === "fulfilled") {
+      console.log("Success:", result.value);
+    } else {
+      console.log("Failed:", result.reason);
+    }
   });
+});
 ```
 
 > "Use when: You want to try all operations and handle successes/failures individually.
@@ -880,10 +862,10 @@ Promise.allSettled([promise1, promise2, promise3])
 
 ```javascript
 Promise.any([promise1, promise2, promise3])
-  .then(result => {
+  .then((result) => {
     // First one to succeed - result is from first fulfillment
   })
-  .catch(error => {
+  .catch((error) => {
     // All failed - error is AggregateError with all rejections
   });
 ```
@@ -892,22 +874,22 @@ Promise.any([promise1, promise2, promise3])
 
 ```javascript
 Promise.any([
-  fetch('https://cdn1.example.com/image.jpg'),
-  fetch('https://cdn2.example.com/image.jpg'),
-  fetch('https://cdn3.example.com/image.jpg')
-]).then(response => {
+  fetch("https://cdn1.example.com/image.jpg"),
+  fetch("https://cdn2.example.com/image.jpg"),
+  fetch("https://cdn3.example.com/image.jpg"),
+]).then((response) => {
   // Use the first successful response
 });
 ```
 
 > "Quick comparison:" :contentReference[oaicite:25]{index=25}
 
-| Method | Resolves when | Rejects when |
-| --- | --- | --- |
-| Promise.all | All fulfill | Any rejects |
-| Promise.race | Any settles | First to reject |
-| Promise.allSettled | All settle | Never |
-| Promise.any | Any fulfills | All reject |
+| Method             | Resolves when | Rejects when    |
+| ------------------ | ------------- | --------------- |
+| Promise.all        | All fulfill   | Any rejects     |
+| Promise.race       | Any settles   | First to reject |
+| Promise.allSettled | All settle    | Never           |
+| Promise.any        | Any fulfills  | All reject      |
 
 > "Most common in interviews: Promise.all() and Promise.race() are asked most often, but knowing allSettled() and any() shows deeper understanding." :contentReference[oaicite:26]{index=26}
 
@@ -924,18 +906,18 @@ Promise.any([
 > Basic chaining:" :contentReference[oaicite:27]{index=27}
 
 ```javascript
-fetch('/api/user')
-  .then(response => response.json())
-  .then(user => {
-    console.log('User:', user);
+fetch("/api/user")
+  .then((response) => response.json())
+  .then((user) => {
+    console.log("User:", user);
     return fetch(`/api/posts/${user.id}`);
   })
-  .then(response => response.json())
-  .then(posts => {
-    console.log('Posts:', posts);
+  .then((response) => response.json())
+  .then((posts) => {
+    console.log("Posts:", posts);
   })
-  .catch(error => {
-    console.log('Error at any step:', error);
+  .catch((error) => {
+    console.log("Error at any step:", error);
   });
 ```
 
@@ -944,9 +926,9 @@ fetch('/api/user')
 > 1. Each .then() returns a new promise:" :contentReference[oaicite:28]{index=28}
 
 ```javascript
-const promise1 = fetch('/api/data');
-const promise2 = promise1.then(response => response.json());
-const promise3 = promise2.then(data => processData(data));
+const promise1 = fetch("/api/data");
+const promise2 = promise1.then((response) => response.json());
+const promise3 = promise2.then((data) => processData(data));
 // Each step is a new promise
 ```
 
@@ -954,15 +936,15 @@ const promise3 = promise2.then(data => processData(data));
 
 ```javascript
 Promise.resolve(5)
-  .then(value => {
+  .then((value) => {
     console.log(value); // 5
     return value * 2;
   })
-  .then(value => {
+  .then((value) => {
     console.log(value); // 10
     return value + 3;
   })
-  .then(value => {
+  .then((value) => {
     console.log(value); // 13
   });
 ```
@@ -971,14 +953,14 @@ Promise.resolve(5)
 
 ```javascript
 getUserId()
-  .then(id => {
+  .then((id) => {
     return fetch(`/api/users/${id}`); // Returns a promise
   })
-  .then(response => {
+  .then((response) => {
     // response is the fetch result, not a promise
     return response.json();
   })
-  .then(user => {
+  .then((user) => {
     console.log(user);
   });
 ```
@@ -990,22 +972,22 @@ doStep1()
   .then(doStep2)
   .then(doStep3)
   .then(doStep4)
-  .catch(error => {
+  .catch((error) => {
     // Catches error from any step above
-    console.log('Error:', error);
+    console.log("Error:", error);
   });
 ```
 
 > "5. You can recover from errors:" :contentReference[oaicite:32]{index=32}
 
 ```javascript
-fetch('/api/data')
-  .then(response => response.json())
-  .catch(error => {
-    console.log('Error, using fallback data');
+fetch("/api/data")
+  .then((response) => response.json())
+  .catch((error) => {
+    console.log("Error, using fallback data");
     return { fallback: true }; // Recovery
   })
-  .then(data => {
+  .then((data) => {
     // This runs whether we got real data or fallback
     console.log(data);
   });
@@ -1015,27 +997,26 @@ fetch('/api/data')
 
 ```javascript
 // Wrong - promise not returned
-fetch('/api/user')
-  .then(response => {
-    fetch('/api/posts'); // Missing return!
+fetch("/api/user")
+  .then((response) => {
+    fetch("/api/posts"); // Missing return!
   })
-  .then(posts => {
+  .then((posts) => {
     console.log(posts); // undefined!
   });
 
 // Correct
-fetch('/api/user')
-  .then(response => {
-    return fetch('/api/posts'); // Return the promise
+fetch("/api/user")
+  .then((response) => {
+    return fetch("/api/posts"); // Return the promise
   })
-  .then(response => response.json())
-  .then(posts => {
+  .then((response) => response.json())
+  .then((posts) => {
     console.log(posts); // Works!
   });
 ```
 
 > "Promise chaining is much cleaner than callback hell, but async/await makes it even cleaner." :contentReference[oaicite:34]{index=34}
-
 
 # async/await
 
@@ -1059,7 +1040,7 @@ Declares that a function returns a promise:
 
 ```javascript
 async function getData() {
-  return 'Hello'; // Automatically wrapped in Promise.resolve()
+  return "Hello"; // Automatically wrapped in Promise.resolve()
 }
 ```
 
@@ -1067,14 +1048,14 @@ Equivalent to:
 
 ```javascript
 function getData() {
-  return Promise.resolve('Hello');
+  return Promise.resolve("Hello");
 }
 ```
 
 Usage:
 
 ```javascript
-getData().then(value => console.log(value)); // 'Hello'
+getData().then((value) => console.log(value)); // 'Hello'
 ```
 
 ### The `await` keyword
@@ -1083,7 +1064,7 @@ Pauses execution until a promise resolves:
 
 ```javascript
 async function fetchUser() {
-  const response = await fetch('/api/user');
+  const response = await fetch("/api/user");
   const user = await response.json();
   return user;
 }
@@ -1093,12 +1074,11 @@ This is much cleaner than the promise chain equivalent:
 
 ```javascript
 function fetchUser() {
-  return fetch('/api/user')
-    .then(response => response.json())
-    .then(user => user);
+  return fetch("/api/user")
+    .then((response) => response.json())
+    .then((user) => user);
 }
 ```
-
 
 # Q17: What are common mistakes with async/await?
 
@@ -1118,7 +1098,6 @@ function fetchUser() {
 
 ### Mistake 6: Top-level `await` in wrong context"
 
-
 # Error Handling in Async Code
 
 ## Q18: How do you handle errors in Promises?
@@ -1130,11 +1109,11 @@ function fetchUser() {
 ### Method 1: Using `.catch()`
 
 ```javascript
-fetch('/api/user')
-  .then(response => response.json())
-  .then(user => console.log(user))
-  .catch(error => {
-    console.error('Something went wrong:', error);
+fetch("/api/user")
+  .then((response) => response.json())
+  .then((user) => console.log(user))
+  .catch((error) => {
+    console.error("Something went wrong:", error);
   });
 ```
 
@@ -1145,19 +1124,19 @@ The `.catch()` will catch any error that occurs in any of the `.then()` blocks a
 ```javascript
 let loading = true;
 
-fetch('/api/user')
-  .then(response => response.json())
-  .then(user => {
+fetch("/api/user")
+  .then((response) => response.json())
+  .then((user) => {
     console.log(user);
     loading = false;
   })
-  .catch(error => {
+  .catch((error) => {
     console.error(error);
     loading = false;
   })
   .finally(() => {
     // This runs whether success or failure
-    console.log('Request completed');
+    console.log("Request completed");
   });
 ```
 
@@ -1174,11 +1153,11 @@ fetch('/api/user')
 ```javascript
 async function fetchUser() {
   try {
-    const response = await fetch('/api/user');
+    const response = await fetch("/api/user");
     const user = await response.json();
     return user;
   } catch (error) {
-    console.error('Error fetching user:', error);
+    console.error("Error fetching user:", error);
     throw error; // Re-throw if you want caller to handle it
   }
 }
@@ -1193,29 +1172,28 @@ async function fetchUser(id) {
 
     if (!response.ok) {
       if (response.status === 404) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       } else if (response.status === 500) {
-        throw new Error('Server error');
+        throw new Error("Server error");
       }
     }
 
     const user = await response.json();
     return user;
   } catch (error) {
-    if (error.message === 'User not found') {
-      console.error('No such user');
+    if (error.message === "User not found") {
+      console.error("No such user");
       return null;
-    } else if (error.name === 'TypeError') {
-      console.error('Network error');
+    } else if (error.name === "TypeError") {
+      console.error("Network error");
       return null;
     } else {
-      console.error('Unexpected error:', error);
+      console.error("Unexpected error:", error);
       throw error;
     }
   }
 }
 ```
-
 
 # fetch API
 
@@ -1228,10 +1206,10 @@ async function fetchUser(id) {
 ### Basic GET request
 
 ```javascript
-fetch('https://api.example.com/users')
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error:', error));
+fetch("https://api.example.com/users")
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error("Error:", error));
 ```
 
 ### With `async/await`
@@ -1239,11 +1217,11 @@ fetch('https://api.example.com/users')
 ```javascript
 async function getUsers() {
   try {
-    const response = await fetch('https://api.example.com/users');
+    const response = await fetch("https://api.example.com/users");
     const data = await response.json();
     console.log(data);
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
   }
 }
 ```
@@ -1252,7 +1230,7 @@ async function getUsers() {
 
 ```javascript
 async function fetchUser() {
-  const response = await fetch('/api/user');
+  const response = await fetch("/api/user");
 
   // This is a 404 error, but fetch doesn't reject!
   // You need to check response.ok
@@ -1265,8 +1243,6 @@ async function fetchUser() {
   return user;
 }
 ```
-
-
 
 # Event Loop
 
@@ -1291,17 +1267,17 @@ The event loop is a mechanism in JavaScript that manages the execution of synchr
 ### The process
 
 ```javascript
-console.log('Start');
+console.log("Start");
 
 setTimeout(() => {
-  console.log('Timeout');
+  console.log("Timeout");
 }, 0);
 
 Promise.resolve().then(() => {
-  console.log('Promise');
+  console.log("Promise");
 });
 
-console.log('End');
+console.log("End");
 
 // Output: Start, End, Promise, Timeout
 ```
@@ -1341,40 +1317,46 @@ Back to Call Stack
 ### Why this order matters
 
 ```javascript
-setTimeout(() => console.log('1'), 0);
+setTimeout(() => console.log("1"), 0);
 
 Promise.resolve()
-  .then(() => console.log('2'))
-  .then(() => console.log('3'));
+  .then(() => console.log("2"))
+  .then(() => console.log("3"));
 
-setTimeout(() => console.log('4'), 0);
+setTimeout(() => console.log("4"), 0);
 
 // Output: 2, 3, 1, 4
 // All promise callbacks run before any setTimeout
 ```
 
-
-
 # Event Loop
 
 ## Q22: Can you explain the event loop with a diagram or step-by-step example?
+
+It is concept of java script runtime.
+
+The event loop is a mechanism in JavaScript that manages the execution of synchronous and
+
+asynchronous code. It continuously checks the call stack, processes microtasks first, then task
+
+que (macrotasks), allowing JavaScript to perform non-blocking operations efficiently.
 
 ### How to Answer
 
 "Let me walk through a concrete example step by step:
 
 ```javascript
-console.log('A');
+console.log("A");
 
 setTimeout(() => {
-  console.log('B');
+  console.log("B");
 }, 0);
 
 Promise.resolve().then(() => {
-  console.log('C');
+  console.log("C");
 });
 
-console.log('D');
+console.log("D");
 ```
 
 ### Step-by-step breakdown
@@ -1489,9 +1471,6 @@ B
 
 After each macrotask, ALL microtasks are processed before the next macrotask runs."
 
-
-
-
 # Global Execution Context
 
 ## Q24: What is the Global Execution Context?
@@ -1520,10 +1499,10 @@ Think of it as the 'default' or 'base' environment for your code. Every JavaScri
 ### Example
 
 ```javascript
-var name = 'John';
+var name = "John";
 
 function greet() {
-  console.log('Hello ' + name);
+  console.log("Hello " + name);
 }
 
 greet();
@@ -1544,13 +1523,13 @@ greet();
 ### Global vs Function Execution Context
 
 ```javascript
-var globalVar = 'global';
+var globalVar = "global";
 
 function outer() {
-  var outerVar = 'outer';
+  var outerVar = "outer";
 
   function inner() {
-    var innerVar = 'inner';
+    var innerVar = "inner";
     console.log(globalVar, outerVar, innerVar);
   }
 
@@ -1573,7 +1552,7 @@ Each execution context has access to its own variables plus all outer contexts (
 #### In browsers
 
 ```javascript
-var globalVar = 'test';
+var globalVar = "test";
 
 console.log(window.globalVar); // 'test'
 console.log(globalVar); // 'test'
@@ -1584,7 +1563,7 @@ console.log(globalVar); // 'test'
 ### With `let`/`const`
 
 ```javascript
-let notOnWindow = 'test';
+let notOnWindow = "test";
 
 console.log(window.notOnWindow); // undefined
 console.log(notOnWindow); // 'test'
@@ -1607,7 +1586,6 @@ const arrowFunction = () => {
 ```
 
 The global execution context is the foundation of JavaScript's execution environment. Everything starts here."
-
 
 # Closures in Async Context
 
@@ -1678,7 +1656,7 @@ With `let`, each iteration creates a new block scope with its own `i`.
 
 ```javascript
 for (var i = 0; i < 3; i++) {
-  (function(j) {
+  (function (j) {
     setTimeout(() => {
       console.log(j);
     }, 1000);
@@ -1694,9 +1672,13 @@ The IIFE creates a new scope for each iteration, capturing the current value of 
 
 ```javascript
 for (var i = 0; i < 3; i++) {
-  setTimeout((i) => {
-    console.log(i);
-  }, 1000, i); // Third argument passes i to callback
+  setTimeout(
+    (i) => {
+      console.log(i);
+    },
+    1000,
+    i,
+  ); // Third argument passes i to callback
 }
 
 // Output: 0, 1, 2
@@ -1707,10 +1689,10 @@ for (var i = 0; i < 3; i++) {
 ```javascript
 function createButtons() {
   for (let i = 0; i < 3; i++) {
-    const button = document.createElement('button');
+    const button = document.createElement("button");
     button.textContent = `Button ${i}`;
 
-    button.addEventListener('click', () => {
+    button.addEventListener("click", () => {
       console.log(`Button ${i} clicked`); // Closure captures i
     });
 
@@ -1728,8 +1710,8 @@ function fetchUserData(userId) {
   const startTime = Date.now();
 
   return fetch(`/api/users/${userId}`)
-    .then(response => response.json())
-    .then(user => {
+    .then((response) => response.json())
+    .then((user) => {
       const elapsed = Date.now() - startTime;
       console.log(`Fetched ${user.name} in ${elapsed}ms`);
       // Closure allows access to startTime and userId
@@ -1742,18 +1724,17 @@ function fetchUserData(userId) {
 
 ```javascript
 function createHeavyCallback() {
-  const hugeArray = new Array(1000000).fill('data');
+  const hugeArray = new Array(1000000).fill("data");
 
   setTimeout(() => {
-    console.log('Done');
+    console.log("Done");
     // Closure keeps hugeArray in memory even though we don't use it!
   }, 1000);
 }
 ```
 
- > Be careful - closures keep all outer scope variables in memory, even if unused. This can cause memory leaks with large data.
->Closures are fundamental to JavaScript and essential for understanding how async callbacks work.
-
+> Be careful - closures keep all outer scope variables in memory, even if unused. This can cause memory leaks with large data.
+> Closures are fundamental to JavaScript and essential for understanding how async callbacks work.
 
 # this Keyword with Callbacks
 
@@ -1769,10 +1750,10 @@ function createHeavyCallback() {
 
 ```javascript
 const user = {
-  name: 'John',
-  greet: function() {
-    console.log('Hello, ' + this.name);
-  }
+  name: "John",
+  greet: function () {
+    console.log("Hello, " + this.name);
+  },
 };
 
 user.greet(); // 'Hello, John' - works fine
@@ -1787,14 +1768,14 @@ When you pass `user.greet` to `setTimeout`, it loses its connection to `user`. T
 
 ```javascript
 const user = {
-  name: 'John',
-  greet: function() {
+  name: "John",
+  greet: function () {
     setTimeout(() => {
-      console.log('Hello, ' + this.name);
+      console.log("Hello, " + this.name);
       // Arrow function doesn't have its own 'this'
       // It uses 'this' from the outer scope (user)
     }, 1000);
-  }
+  },
 };
 
 user.greet(); // 'Hello, John' after 1 second
@@ -1806,10 +1787,10 @@ Arrow functions don't have their own `this` - they inherit it from the surroundi
 
 ```javascript
 const user = {
-  name: 'John',
-  greet: function() {
-    console.log('Hello, ' + this.name);
-  }
+  name: "John",
+  greet: function () {
+    console.log("Hello, " + this.name);
+  },
 };
 
 setTimeout(user.greet.bind(user), 1000);
@@ -1827,14 +1808,14 @@ setTimeout(() => user.greet(), 1000);
 
 ```javascript
 const user = {
-  name: 'John',
-  greet: function() {
+  name: "John",
+  greet: function () {
     const self = this; // Store reference
 
-    setTimeout(function() {
-      console.log('Hello, ' + self.name);
+    setTimeout(function () {
+      console.log("Hello, " + self.name);
     }, 1000);
-  }
+  },
 };
 ```
 
@@ -1880,28 +1861,25 @@ class DataFetcher {
 
   // Problem
   fetchData() {
-    fetch('/api/data')
-      .then(function(response) {
-        this.data = response; // Error! 'this' is undefined
-      });
+    fetch("/api/data").then(function (response) {
+      this.data = response; // Error! 'this' is undefined
+    });
   }
 
   // Solution 1: Arrow function
   fetchData() {
-    fetch('/api/data')
-      .then(response => {
-        this.data = response; // Correct!
-      });
+    fetch("/api/data").then((response) => {
+      this.data = response; // Correct!
+    });
   }
 
   // Solution 2: Store this
   fetchData() {
     const self = this;
 
-    fetch('/api/data')
-      .then(function(response) {
-        self.data = response; // Works
-      });
+    fetch("/api/data").then(function (response) {
+      self.data = response; // Works
+    });
   }
 }
 ```
@@ -1911,7 +1889,7 @@ class DataFetcher {
 ```javascript
 class API {
   constructor() {
-    this.baseURL = 'https://api.example.com';
+    this.baseURL = "https://api.example.com";
   }
 
   async fetchUser(id) {
@@ -1935,8 +1913,7 @@ setTimeout(() => api.loadUser(1), 1000); // Works
 setTimeout(api.loadUser.bind(api, 1), 1000); // Works
 ```
 
->General rule: Use arrow functions for callbacks when you need to preserve `this` from the outer scope. They're the modern, clean solution."
-
+> General rule: Use arrow functions for callbacks when you need to preserve `this` from the outer scope. They're the modern, clean solution."
 
 # Modules (import/export)
 
@@ -1964,7 +1941,7 @@ export { divide };
 ### Importing
 
 ```javascript
-import { add, subtract, multiply } from './math.js';
+import { add, subtract, multiply } from "./math.js";
 
 console.log(add(5, 3)); // 8
 ```
@@ -1983,15 +1960,15 @@ export default class User {
 Or
 
 ```javascript
-const config = { theme: 'dark' };
+const config = { theme: "dark" };
 export default config;
 ```
 
 ### Importing
 
 ```javascript
-import User from './user.js'; // Can name it anything
-import AppConfig from './user.js'; // Same file, different name
+import User from "./user.js"; // Can name it anything
+import AppConfig from "./user.js"; // Same file, different name
 ```
 
 ### Mixing named and default
@@ -2002,14 +1979,14 @@ export default function fetchData() {
   // Main function
 }
 
-export const API_URL = 'https://api.example.com';
+export const API_URL = "https://api.example.com";
 export const timeout = 5000;
 ```
 
 ### Importing
 
 ```javascript
-import fetchData, { API_URL, timeout } from './api.js';
+import fetchData, { API_URL, timeout } from "./api.js";
 ```
 
 ### Import everything as an object
@@ -2023,7 +2000,7 @@ export const subtract = (a, b) => a - b;
 ### Importing
 
 ```javascript
-import * as math from './math.js';
+import * as math from "./math.js";
 
 console.log(math.add(5, 3)); // 8
 console.log(math.subtract(5, 3)); // 2
@@ -2032,7 +2009,7 @@ console.log(math.subtract(5, 3)); // 2
 ### Renaming imports
 
 ```javascript
-import { add as addition, subtract as subtraction } from './math.js';
+import { add as addition, subtract as subtraction } from "./math.js";
 
 console.log(addition(5, 3)); // 8
 ```
@@ -2041,15 +2018,15 @@ console.log(addition(5, 3)); // 8
 
 ```javascript
 // utils/index.js
-export { add, subtract } from './math.js';
-export { formatDate } from './date.js';
-export { default as User } from './user.js';
+export { add, subtract } from "./math.js";
+export { formatDate } from "./date.js";
+export { default as User } from "./user.js";
 ```
 
 ### Now can import from one place
 
 ```javascript
-import { add, formatDate, User } from './utils/index.js';
+import { add, formatDate, User } from "./utils/index.js";
 ```
 
 ### Dynamic imports (code splitting)
@@ -2058,7 +2035,7 @@ import { add, formatDate, User } from './utils/index.js';
 // Load module conditionally
 async function loadModule() {
   if (condition) {
-    const module = await import('./heavy-module.js');
+    const module = await import("./heavy-module.js");
     module.doSomething();
   }
 }
@@ -2066,8 +2043,8 @@ async function loadModule() {
 
 ```javascript
 // Load on user action
-button.addEventListener('click', async () => {
-  const { default: Chart } = await import('./chart.js');
+button.addEventListener("click", async () => {
+  const { default: Chart } = await import("./chart.js");
   new Chart(data);
 });
 ```
@@ -2076,13 +2053,13 @@ button.addEventListener('click', async () => {
 
 ```javascript
 // CommonJS (Node.js)
-const module = require('./module');
+const module = require("./module");
 module.exports = { something };
 ```
 
 ```javascript
 // ES6 Modules
-import module from './module.js';
+import module from "./module.js";
 export default { something };
 ```
 
@@ -2102,13 +2079,12 @@ export default { something };
 
 <!-- Inline module -->
 <script type="module">
-  import { greet } from './utils.js';
-  greet('World');
+  import { greet } from "./utils.js";
+  greet("World");
 </script>
 ```
 
->ES6 modules are now the standard way to organize JavaScript code, both in browsers and Node.js."
-
+> ES6 modules are now the standard way to organize JavaScript code, both in browsers and Node.js."
 
 # CommonJS vs ES6 Modules
 
@@ -2123,8 +2099,8 @@ export default { something };
 #### CommonJS
 
 ```javascript
-const module = require('./module');
-const { specific } = require('./module');
+const module = require("./module");
+const { specific } = require("./module");
 
 module.exports = { something };
 exports.something = value;
@@ -2133,8 +2109,8 @@ exports.something = value;
 #### ES6 Modules
 
 ```javascript
-import module from './module.js';
-import { specific } from './module.js';
+import module from "./module.js";
+import { specific } from "./module.js";
 
 export default { something };
 export const something = value;
@@ -2147,15 +2123,15 @@ export const something = value;
 CommonJS loads modules synchronously:
 
 ```javascript
-const fs = require('fs'); // Blocks until loaded
-console.log('Loaded');
+const fs = require("fs"); // Blocks until loaded
+console.log("Loaded");
 ```
 
 ES6 modules load asynchronously:
 
 ```javascript
-import fs from 'fs'; // Non-blocking
-console.log('Loaded');
+import fs from "fs"; // Non-blocking
+console.log("Loaded");
 ```
 
 #### 2. Timing: Runtime vs Parse time
@@ -2164,7 +2140,7 @@ CommonJS: Modules are loaded at runtime
 
 ```javascript
 if (condition) {
-  const module = require('./module'); // Can be conditional
+  const module = require("./module"); // Can be conditional
 }
 ```
 
@@ -2172,7 +2148,7 @@ ES6: Imports are static and hoisted
 
 ```javascript
 if (condition) {
-  import module from './module'; // Syntax error!
+  import module from "./module"; // Syntax error!
 }
 ```
 
@@ -2180,7 +2156,7 @@ Must use dynamic import for conditional loading:
 
 ```javascript
 if (condition) {
-  const module = await import('./module.js'); // Works
+  const module = await import("./module.js"); // Works
 }
 ```
 
@@ -2196,11 +2172,11 @@ module.exports = {
   count,
   increment() {
     count++;
-  }
+  },
 };
 
 // main.js
-const counter = require('./counter');
+const counter = require("./counter");
 
 console.log(counter.count); // 0
 counter.increment();
@@ -2218,7 +2194,7 @@ export function increment() {
 }
 
 // main.js
-import { count, increment } from './counter.js';
+import { count, increment } from "./counter.js";
 
 console.log(count); // 0
 increment();
@@ -2231,12 +2207,12 @@ ES6 modules support tree shaking (dead code elimination):
 
 ```javascript
 // With ES6 modules, bundlers can detect unused exports
-import { add } from './math.js'; // Only 'add' gets bundled
+import { add } from "./math.js"; // Only 'add' gets bundled
 ```
 
 ```javascript
 // CommonJS imports everything
-const { add } = require('./math.js'); // Whole module bundled
+const { add } = require("./math.js"); // Whole module bundled
 ```
 
 #### 5. `this` keyword
@@ -2258,13 +2234,13 @@ console.log(this); // undefined
 CommonJS: `.js` files are CommonJS by default in Node
 
 ```javascript
-require('./file'); // .js assumed
+require("./file"); // .js assumed
 ```
 
 ES6: Needs `.mjs` or `"type": "module"` in `package.json`
 
 ```javascript
-import './file.js'; // Extension required in browsers
+import "./file.js"; // Extension required in browsers
 ```
 
 ### Current state in Node.js
@@ -2288,13 +2264,13 @@ Or use `.mjs` for ES6, `.cjs` for CommonJS.
 
 ```javascript
 // Can import CommonJS in ES6
-import module from './commonjs-module.js';
+import module from "./commonjs-module.js";
 ```
 
 ```javascript
 // Cannot require() ES6 modules in CommonJS
 // Must use dynamic import
-const module = await import('./es6-module.js');
+const module = await import("./es6-module.js");
 ```
 
 ### Which to use
@@ -2303,8 +2279,7 @@ const module = await import('./es6-module.js');
 - Node.js: ES6 modules are now recommended
 - Legacy code: Still uses CommonJS
 
->ES6 modules are the future. They're more powerful, better optimized, and work everywhere."
-
+> ES6 modules are the future. They're more powerful, better optimized, and work everywhere."
 
 # NPM & NPX Basics
 
@@ -2355,8 +2330,7 @@ npx create-react-app my-app
 - **NPM:** Package manager for installing and managing dependencies.
 - **NPX:** Package executor for running packages without installing them.
 
->In modern workflows, you use NPM for dependencies your project needs, and NPX for one-time commands and tools."
-
+> In modern workflows, you use NPM for dependencies your project needs, and NPX for one-time commands and tools."
 
 # Throttling & Debouncing
 
@@ -2435,7 +2409,7 @@ function debounce(func, delay) {
 ```javascript
 // Search function
 function searchAPI(query) {
-  console.log('Searching for:', query);
+  console.log("Searching for:", query);
   // API call here
 }
 
@@ -2443,7 +2417,7 @@ function searchAPI(query) {
 const debouncedSearch = debounce(searchAPI, 300);
 
 // In event handler
-input.addEventListener('input', (e) => {
+input.addEventListener("input", (e) => {
   debouncedSearch(e.target.value);
 });
 
@@ -2485,13 +2459,13 @@ function App() {
 
     try {
       const response = await fetch(
-        "https://jsonplaceholder.typicode.com/posts"
+        "https://jsonplaceholder.typicode.com/posts",
       );
 
       const data = await response.json();
 
       const filteredPosts = data.filter((post) =>
-        post.title.toLowerCase().includes(searchText.toLowerCase())
+        post.title.toLowerCase().includes(searchText.toLowerCase()),
       );
 
       setPosts(filteredPosts);
@@ -2552,7 +2526,6 @@ function App() {
 
 export default App;
 ```
-
 
 # Throttling & Debouncing
 
@@ -2628,7 +2601,7 @@ export default function App() {
     setLoading(true);
 
     const response = await fetch(
-      `https://jsonplaceholder.typicode.com/posts?_page=${pageNumber}&_limit=10`
+      `https://jsonplaceholder.typicode.com/posts?_page=${pageNumber}&_limit=10`,
     );
 
     const data = await response.json();
@@ -2661,7 +2634,7 @@ export default function App() {
   // Throttle scroll handler
   const throttledScroll = useMemo(
     () => throttle(loadMore, 300),
-    [page, loading]
+    [page, loading],
   );
 
   useEffect(() => {
@@ -2706,8 +2679,6 @@ export default function App() {
 - Button clicks - Prevent spam clicking
 - Progress bar updates - Smooth updates without overload
 
-
-
 # Common Patterns & Best Practices
 
 ## Q33: What are some async/await best practices?
@@ -2722,7 +2693,7 @@ export default function App() {
 
 ```javascript
 async function fetchData() {
-  const data = await fetch('/api/data');
+  const data = await fetch("/api/data");
   return data; // Errors will crash
 }
 ```
@@ -2732,10 +2703,10 @@ async function fetchData() {
 ```javascript
 async function fetchData() {
   try {
-    const data = await fetch('/api/data');
+    const data = await fetch("/api/data");
     return data;
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     throw error; // Or handle gracefully
   }
 }
@@ -2747,8 +2718,8 @@ async function fetchData() {
 
 ```javascript
 async function loadData() {
-  const users = await fetchUsers();       // 1 sec
-  const posts = await fetchPosts();       // 1 sec
+  const users = await fetchUsers(); // 1 sec
+  const posts = await fetchPosts(); // 1 sec
   const comments = await fetchComments(); // 1 sec
 
   return { users, posts, comments };
@@ -2762,7 +2733,7 @@ async function loadData() {
   const [users, posts, comments] = await Promise.all([
     fetchUsers(),
     fetchPosts(),
-    fetchComments()
+    fetchComments(),
   ]);
 
   return { users, posts, comments };
@@ -2776,12 +2747,12 @@ async function loadDashboard() {
   const results = await Promise.allSettled([
     fetchUsers(),
     fetchPosts(),
-    fetchStats()
+    fetchStats(),
   ]);
 
-  const users = results[0].status === 'fulfilled' ? results[0].value : [];
-  const posts = results[1].status === 'fulfilled' ? results[1].value : [];
-  const stats = results[2].status === 'fulfilled' ? results[2].value : null;
+  const users = results[0].status === "fulfilled" ? results[0].value : [];
+  const posts = results[1].status === "fulfilled" ? results[1].value : [];
+  const stats = results[2].status === "fulfilled" ? results[2].value : null;
 
   return { users, posts, stats };
 }
@@ -2808,7 +2779,7 @@ for (const user of users) {
 #### Or `Promise.all` for parallel
 
 ```javascript
-await Promise.all(users.map(user => updateUser(user)));
+await Promise.all(users.map((user) => updateUser(user)));
 ```
 
 ### 5. Return promises directly when possible
@@ -2866,7 +2837,7 @@ async function apiRequest(url, options = {}) {
   try {
     const response = await fetch(url, {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...options.headers,
       },
       ...options,
@@ -2878,7 +2849,7 @@ async function apiRequest(url, options = {}) {
 
     return await response.json();
   } catch (error) {
-    console.error('API request failed:', error);
+    console.error("API request failed:", error);
     throw error;
   }
 }
@@ -2887,11 +2858,11 @@ async function apiRequest(url, options = {}) {
 #### Usage is much cleaner
 
 ```javascript
-const user = await apiRequest('/api/users/1');
+const user = await apiRequest("/api/users/1");
 
-const newPost = await apiRequest('/api/posts', {
-  method: 'POST',
-  body: JSON.stringify({ title: 'Hello' })
+const newPost = await apiRequest("/api/posts", {
+  method: "POST",
+  body: JSON.stringify({ title: "Hello" }),
 });
 ```
 
@@ -2903,7 +2874,7 @@ useEffect(() => {
 
   async function fetchData() {
     try {
-      const data = await fetch('/api/data');
+      const data = await fetch("/api/data");
 
       if (!cancelled) {
         setData(data);
@@ -2940,8 +2911,8 @@ async function fetchWithTimeout(url, timeout = 5000) {
 
     return await response.json();
   } catch (error) {
-    if (error.name === 'AbortError') {
-      throw new Error('Request timeout');
+    if (error.name === "AbortError") {
+      throw new Error("Request timeout");
     }
 
     throw error;
@@ -2961,7 +2932,7 @@ async function fetchWithRetry(url, maxRetries = 3) {
       if (i === maxRetries - 1) throw error;
 
       // Wait before retry (exponential backoff)
-      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+      await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
 
       console.log(`Retry ${i + 1}/${maxRetries}`);
     }
@@ -2996,7 +2967,7 @@ function promiseAll(promises) {
 
     promises.forEach((promise, index) => {
       Promise.resolve(promise)
-        .then(value => {
+        .then((value) => {
           results[index] = value;
           completed++;
 
@@ -3013,11 +2984,9 @@ function promiseAll(promises) {
 #### Usage
 
 ```javascript
-promiseAll([
-  Promise.resolve(1),
-  Promise.resolve(2),
-  Promise.resolve(3)
-]).then(results => console.log(results)); // [1, 2, 3]
+promiseAll([Promise.resolve(1), Promise.resolve(2), Promise.resolve(3)]).then(
+  (results) => console.log(results),
+); // [1, 2, 3]
 ```
 
 ### 2. Implement sequential promise execution
@@ -3039,9 +3008,9 @@ async function executeSequentially(promises) {
 
 ```javascript
 const tasks = [
-  () => new Promise(resolve => setTimeout(() => resolve(1), 1000)),
-  () => new Promise(resolve => setTimeout(() => resolve(2), 500)),
-  () => new Promise(resolve => setTimeout(() => resolve(3), 1500))
+  () => new Promise((resolve) => setTimeout(() => resolve(1), 1000)),
+  () => new Promise((resolve) => setTimeout(() => resolve(2), 500)),
+  () => new Promise((resolve) => setTimeout(() => resolve(3), 1500)),
 ];
 
 executeSequentially(tasks).then(console.log); // [1, 2, 3] after 3 seconds total
@@ -3060,7 +3029,7 @@ async function retry(fn, maxAttempts = 3, delay = 1000) {
       }
 
       console.log(`Attempt ${attempt} failed, retrying...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 }
@@ -3069,10 +3038,10 @@ async function retry(fn, maxAttempts = 3, delay = 1000) {
 #### Usage
 
 ```javascript
-retry(() => fetch('/api/data'))
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('All attempts failed:', error));
+retry(() => fetch("/api/data"))
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error("All attempts failed:", error));
 ```
 
 ### 4. Rate limiter
@@ -3125,7 +3094,7 @@ const limitedFetch = rateLimiter(fetch, 3, 1000);
 
 ```javascript
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 ```
 
@@ -3133,9 +3102,9 @@ function sleep(ms) {
 
 ```javascript
 async function demo() {
-  console.log('Start');
+  console.log("Start");
   await sleep(2000);
-  console.log('2 seconds later');
+  console.log("2 seconds later");
 }
 ```
 
@@ -3146,8 +3115,8 @@ async function fetchWithTimeout(url, timeout) {
   return Promise.race([
     fetch(url),
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Timeout')), timeout)
-    )
+      setTimeout(() => reject(new Error("Timeout")), timeout),
+    ),
   ]);
 }
 ```
@@ -3155,10 +3124,10 @@ async function fetchWithTimeout(url, timeout) {
 #### Usage
 
 ```javascript
-fetchWithTimeout('/api/data', 5000)
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error(error.message));
+fetchWithTimeout("/api/data", 5000)
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error(error.message));
 ```
 
 ### 7. Batch requests
@@ -3184,13 +3153,9 @@ async function batchRequests(items, batchSize, processFn) {
 ```javascript
 const items = Array.from({ length: 100 }, (_, i) => i);
 
-const results = await batchRequests(
-  items,
-  10,
-  async (item) => {
-    return await fetch(`/api/item/${item}`).then(r => r.json());
-  }
-);
+const results = await batchRequests(items, 10, async (item) => {
+  return await fetch(`/api/item/${item}`).then((r) => r.json());
+});
 ```
 
 ### 8. Debounced async function
@@ -3227,10 +3192,8 @@ function debounceAsync(fn, delay) {
 ```javascript
 function promiseRace(promises) {
   return new Promise((resolve, reject) => {
-    promises.forEach(promise => {
-      Promise.resolve(promise)
-        .then(resolve)
-        .catch(reject);
+    promises.forEach((promise) => {
+      Promise.resolve(promise).then(resolve).catch(reject);
     });
   });
 }
@@ -3268,10 +3231,12 @@ async function parallelLimit(tasks, limit) {
 #### Usage
 
 ```javascript
-const tasks = Array.from({ length: 10 }, (_, i) =>
-  () => new Promise(resolve => setTimeout(() => resolve(i), 1000))
+const tasks = Array.from(
+  { length: 10 },
+  (_, i) => () => new Promise((resolve) => setTimeout(() => resolve(i), 1000)),
 );
 
 parallelLimit(tasks, 3).then(console.log);
 ```
->These problems test your understanding of promises, async/await, concurrency, and error handling. Practice implementing them from scratch!"
+
+> These problems test your understanding of promises, async/await, concurrency, and error handling. Practice implementing them from scratch!"
