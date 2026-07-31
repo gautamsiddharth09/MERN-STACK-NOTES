@@ -1,7 +1,19 @@
 
+# Table of Contents 
 
-
-
+1. Variables & Data Types
+2. Type Coercion & Conversion
+3. Scope & Context
+4. Hoisting & TDZ
+5. Closures
+6. `this` Keyword
+7. `call()`, `apply()`, `bind()`
+8. Objects
+9. Functions
+10. Arrays
+11. Strings & Numbers
+12. Map & Set
+13. Miscellaneous Concepts
 
 
 # Variables & Data Types
