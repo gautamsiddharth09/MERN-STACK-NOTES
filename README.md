@@ -13,7 +13,6 @@ These are my personal notes while learning MERN Stack.
 
 
 
-
 <!-- 
 Format my raw notes into a clean, simple, GitHub-friendly Markdown document.
 
@@ -42,6 +41,6 @@ Format my raw notes into a clean, simple, GitHub-friendly Markdown document.
 
 ## Output
 
-Return **only** the final Markdown. 
+Return **only** the final Markdown.  -->
 
-  -->
+
