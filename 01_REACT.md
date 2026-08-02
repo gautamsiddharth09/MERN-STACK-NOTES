@@ -1892,3 +1892,6 @@ const doubled = useMemo(() => count * 2, [count]);
 ## 2. Values/functions changing every render anyway
 
 Memoisation becomes useless if dependencies always change.
+
+
+
