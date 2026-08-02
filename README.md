@@ -41,7 +41,7 @@ Format my raw notes into a clean, simple, GitHub-friendly Markdown document.
 
 ## Output
 
-Return **only** the final Markdown.  -->
+Return **only** the final Markdown.  --> 
 
 
 
