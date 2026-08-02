@@ -1,4 +1,4 @@
-Q. What is React and how does it work?
+## Q. What is React and how does it work?
 
 “React is a JavaScript library that is used to build user interfaces, especially single-page applications.
 It works by breaking the UI into reusable components and updating only the parts of the page that change, instead of reloading the whole page.”
