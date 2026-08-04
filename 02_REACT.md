@@ -712,7 +712,6 @@ function App() {
 }
 ```
 
-
 ## One-Line Memory Trick
 
 > **Browser creates the event → React wraps it → Your event handler receives the wrapper.**
