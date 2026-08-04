@@ -654,6 +654,69 @@ function App() {
 
 👉 It is SyntheticEvent (React version of event).
 
+# React Event Flow
+
+```text
+User Clicks Button
+        │
+        ▼
+Browser Creates Native Event
+(Browser Event)
+        │
+        ▼
+React Receives the Native Event
+        │
+        ▼
+React Creates a SyntheticEvent
+(React Event Wrapper)
+        │
+        ▼
+React Calls Your `onClick` Function
+```
+
+## Explanation
+
+### 1. User Clicks Button
+The user clicks a button on the webpage.
+
+### 2. Browser Creates Native Event
+The browser creates a **Native Event** (such as `MouseEvent`).
+
+- Created by the browser
+- Different browsers may implement events slightly differently
+
+### 3. React Receives the Event
+React listens for browser events using **event delegation** and receives the native event.
+
+### 4. React Creates a SyntheticEvent
+React wraps the native event inside a **SyntheticEvent**.
+
+A **SyntheticEvent** is:
+- A React event object
+- A wrapper around the browser's native event
+- Provides the same API across all browsers
+- Makes event handling consistent
+
+### 5. React Calls Your `onClick` Function
+Finally, React passes the `SyntheticEvent` to your event handler.
+
+Example:
+
+```jsx
+function App() {
+  const handleClick = (event) => {
+    console.log(event); // SyntheticEvent
+  };
+
+  return <button onClick={handleClick}>Click Me</button>;
+}
+```
+
+
+## One-Line Memory Trick
+
+> **Browser creates the event → React wraps it → Your event handler receives the wrapper.**
+
 ## 🧠 What is Event Delegation in React?
 
 Event delegation means:
@@ -1199,3 +1262,4 @@ RTK Query is Redux Toolkit’s built-in solution for managing server state (API 
 ## 10. When should you choose Redux Toolkit over Context API?
 
 I would use Context API for simple and lightweight global state like theme, language, or authentication flags where updates are infrequent. However, for complex applications with large-scale state, frequent updates, or async data handling like API calls, I would choose Redux Toolkit because it provides better structure, scalability, middleware support, and powerful tools like RTK Query and DevTools.
+
