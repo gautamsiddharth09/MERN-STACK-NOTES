@@ -723,7 +723,6 @@ Event delegation means:
 👉 Instead of attaching event listeners to each element, React attaches one listener at the root.
 
 Then it uses event bubbling to:
-
 - Detect which element triggered the event
 - Bubble up it child to parent
 - Route it to correct handler

@@ -2344,8 +2344,6 @@ If the event keeps happening, the function does **NOT** run.
 
 ### Why we use it?
 
-
-
 - To avoid unnecessary function calls
 - To improve performance
 - To prevent multiple API calls
