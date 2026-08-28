@@ -488,7 +488,7 @@ StrictMode enables additional checks for:
 - Unexpected mutations
 - Improper use of hooks
 
-## ⚠️ Why components run twice in dev (important point)
+## Why components run twice in dev (important point)
 
 In React 18+, StrictMode intentionally:
 

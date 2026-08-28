@@ -2338,12 +2338,11 @@ npx create-react-app my-app
 
 ### How to Answer
 
-
 Debouncing makes sure a function runs only after an event stops.
 
 If the event keeps happening, the function does **NOT** run.
 
-### Why we use it?
+### Why we use it ?
 
 - To avoid unnecessary function calls
 - To improve performance
