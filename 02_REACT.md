@@ -1057,7 +1057,8 @@ Redux Toolkit is the official, recommended way to write Redux logic.
 
 It is basically a simplified and modern version of Redux that reduces boilerplate and makes Redux easier to use.
 
-### ❌ Problems with plain Redux
+
+###  Problems with plain Redux
 
 Before Redux Toolkit, Redux had a few pain points:
 
