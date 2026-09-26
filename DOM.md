@@ -110,7 +110,7 @@ Document
 
 ---
 
-# Q2: What are the Different Ways to Select DOM Elements?
+# Q2: What are the Different Ways to Select DOM Elements ?
 
 ### Answer
 
