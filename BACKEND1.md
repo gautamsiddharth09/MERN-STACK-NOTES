@@ -1,4 +1,6 @@
-Q1. What is Node.js, and how does its runtime architecture differ from running JavaScript 
+# Node.js Interview Notes
+
+## Q1. What is Node.js, and how does its runtime architecture differ from running JavaScript 
 in a browser ? 
 Node.js is a JavaScript runtime environment that allows us to execute JavaScript outside the 
 browser, mainly for backend and server-side development. It uses Google's V8 JavaScript 
@@ -13,17 +15,15 @@ file systems, networking, HTTP servers, streams, and processes.
 So, the V8 engine executes JavaScript in both environments, but the runtime environment 
 around V8 is different. 
 JavaScript execution in Node.js primarily happens on a single main thread, but Node.js can 
-handle many concurrent I/O operations using its Event Loop and underlying system 
-mechanisms.   
+handle many concurrent I/O operations using its Event Loop and underlying system mechanisms.   
 Node.js = V8 JavaScript engine + Node.js runtime APIs + Event-driven, non-blocking I/O 
 architecture.  
 
-Q2. Explain the Node.js Event Loop in detail — name and describe each of its phases 
+## Q2. Explain the Node.js Event Loop in detail — name and describe each of its phases 
 (timers, pending callbacks, idle/prepare, poll, check, close callbacks). 
 The Node.js Event Loop is responsible for handling asynchronous operations without blocking 
 the main JavaScript thread. It continuously checks for callbacks or tasks that are ready to 
-execute and processes them through different phases of the Event Loop at the appropriate 
-time.. 
+execute and processes them through different phases of the Event Loop at the appropriate time.. 
 JavaScript runs mainly on one thread. 
 Some operations, like file I/O, network requests, and timers, can take time. 
 Instead of waiting for them and blocking JavaScript, Node.js handles them asynchronously. 
@@ -70,7 +70,7 @@ Easy memory trick:
 T → P → I → P → C → C 
 Timers → Pending → Idle → Poll → Check → Close 
 
-Q3. What is the difference between blocking and non-blocking I/O? How does Node.js 
+## Q3. What is the difference between blocking and non-blocking I/O? How does Node.js 
 achieve non-blocking behavior on a single thread?  
 Blocking I/O means the program waits for an I/O operation to finish before doing the next task. 
 Non-blocking I/O means the program does not wait. It starts the I/O operation and continues 
@@ -83,7 +83,7 @@ that callback.
 So, even though Node.js runs JavaScript on a single main thread, it can handle many I/O 
 operations without waiting for each one to finish. 
 
-Q4. Explain the difference between process.nextTick(), setImmediate(), and 
+## Q4. Explain the difference between process.nextTick(), setImmediate(), and 
 setTimeout(fn, 0) — and their relative execution order ? 
 "process.nextTick(), setImmediate(), and setTimeout(fn, 0) all schedule 
 callbacks, but they work differently. 
@@ -96,7 +96,7 @@ setTimeout(fn, 0) and setImmediate() is not always fixed when they are called fr
 the main script. However, inside an I/O callback, setImmediate() normally runs before 
 setTimeout(fn, 0)." 
 
-Q5. What is libuv, and what role does it play in Node.js's concurrency model ? 
+## Q5. What is libuv, and what role does it play in Node.js's concurrency model ? 
 libuv is a library used by Node.js to handle asynchronous operations. It helps Node.js perform 
 I/O operations without blocking the main JavaScript thread. 
 libuv provides the Event Loop and also has a thread pool for certain operations, such as some 
@@ -105,7 +105,7 @@ its callback.
 Because of this, Node.js can handle many I/O operations while JavaScript continues running on 
 the main thread." 
 
-Q6. What are Streams in Node.js? Explain the four stream types (Readable, Writable, 
+## Q6. What are Streams in Node.js? Explain the four stream types (Readable, Writable, 
 Duplex, Transform) with a real use case for each.  
 Streams in Node.js are used to handle data piece by piece instead of loading the complete data 
 into memory. They are useful when working with large files, videos, network data, and uploads 
@@ -119,16 +119,17 @@ example, gzip compression.
 The main benefit of streams is that they save memory because we don't need to load the 
 complete data at once." 
 
-Q7. What is the Buffer class in Node.js, and why is it needed when JavaScript already has 
+## Q7. What is the Buffer class in Node.js, and why is it needed when JavaScript already has 
 strings ? 
 Buffer is a class in Node.js used to work with binary data. It stores data as bytes. It is commonly 
 used when working with files, images, videos, audio, and network data. 
 JavaScript strings are mainly used for text, but Node.js also needs to work with binary data. 
 That's why Node.js provides Buffer. 
 For example, when we read an image or a file without specifying an encoding, Node.js can 
-return the data as a Buffer." 
+return the data as a Buffer.
 
-Q8. Explain the CommonJS module system (require/module.exports) vs ES Modules 
+
+## Q8. Explain the CommonJS module system (require/module.exports) vs ES Modules 
 (import/export) in Node.js — differences and interop issues ? 
 "Node.js supports two main module systems: CommonJS and ES Modules. 
 Package.json: – { "type": "module" } – This tells Node.js to treat .js files as ES Modules. 
@@ -150,7 +151,7 @@ ESM provide Static structure
 import { add } from "./math.js"; - use kar rahe ho, bundler unused subtract aur multiply ko 
 final production bundle se remove kar sakta hai.  
 
-Q9. What is the purpose of package.json vs package-lock.json? What problem does the 
+## Q9. What is the purpose of package.json vs package-lock.json? What problem does the 
 lock file solve?  
 package.json contains information about the project, including its dependencies, scripts, and 
 configuration. package-lock.json records the exact versions of the installed packages and 
@@ -158,7 +159,7 @@ their dependencies. The main purpose of package-lock.json is to make installatio
 consistent. It ensures that developers, CI/CD, and production environments install the same 
 dependency versions, which helps avoid 'works on my machine' problems." 
 
-Q10. How does error handling differ across callbacks, Promises, and async/await? What 
+## Q10. How does error handling differ across callbacks, Promises, and async/await? What 
 happens to an unhandled Promise rejection in Node.js ? 
 Callbacks 
 In the callback approach, we usually use an error-first callback. 
@@ -186,7 +187,7 @@ If we don't handle this rejection, Node.js emits an unhandledRejection event. In
 Node.js behavior, an unhandled rejection is treated as an uncaught exception by default, so the 
 process will generally terminate. 
 
-Q11. Explain the EventEmitter class. How would you build a custom class that emits and 
+## Q11. Explain the EventEmitter class. How would you build a custom class that emits and 
 listens to events?  
 EventEmitter is a class provided by Node.js that allows objects to: 
 ● emit (send/trigger) events - Event ko trigger/announce karna.  
@@ -216,7 +217,7 @@ to listen for that event. For example, in a User class, when a user is registere
 registered event. A listener can then handle that event, such as sending a welcome email or 
 creating a log. 
 
-Q12. What are child processes in Node.js? Differentiate between fork(), spawn(), exec(), 
+## Q12. What are child processes in Node.js? Differentiate between fork(), spawn(), exec(), 
 and execFile().  
 Child processes allow our Node.js or Express application to create another process to do some 
 work separately. We can use them to run external commands, programs, or heavy tasks. 
@@ -226,7 +227,7 @@ execFile() is used to run a specific executable directly.
 fork() is used to create another Node.js process, and the parent and child can communicate 
 using messages. 
 
-Q13. What is clustering in Node.js, and how does the cluster module help utilize 
+## Q13. What is clustering in Node.js, and how does the cluster module help utilize 
 multi-core CPUs?  
 "Node.js clustering means running multiple worker processes of the same Node.js application. 
 Normally, Node.js uses one main process for JavaScript execution. The cluster module allows 
@@ -246,7 +247,7 @@ karne mein help karta hai.
 ● For modern Node.js applications, clustering is only one option; worker threads are 
 another option for CPU-intensive work. 
 
-14. What are Worker Threads, and how do they differ from clustering and from child 
+## 14. What are Worker Threads, and how do they differ from clustering and from child 
 processes ?  
 Cluster ka main purpose: Multiple CPU cores ka use karke Node.js server ki request-handling 
 capacity badhana. 
@@ -272,7 +273,7 @@ process."
 
 
 
-How to Handle 1 Million Requests in an Express.js Application 
+## How to Handle 1 Million Requests in an Express.js Application 
 If an application receives around 1 million requests and the server load is very high, how 
 would you handle it? 
 Answer 
