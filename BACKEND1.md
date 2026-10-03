@@ -473,8 +473,6 @@ So, in simple terms, synchronous code runs first, then microtasks are processed,
 
 # Q20. Explain horizontal vs vertical scaling for a Node.js application, and what stateless design choices make horizontal scaling easier.
 
-# Q20. Explain horizontal vs vertical scaling for a Node.js application, and what stateless design choices make horizontal scaling easier.
-
 ## Interview Answer
 
 Scaling means increasing the capacity of an application so that it can handle more users and requests.
@@ -507,7 +505,7 @@ Client
   ↓
 Server
 4 CPU + 8 GB RAM
-```
+
 
 ## Advantages & Disadvantages
 
@@ -591,73 +589,3 @@ Server 1 / Server 2 / Server 3
 
 
 
-
-# How to Handle 1 Million Requests in an Express.js Application
-
-## Q1. If an application receives around 1 million requests and the server load is very high, how would you handle it?
-
-### Answer
-
-If my **Express.js** application receives around 1 million requests, I would not depend on a single server. I would use scaling, load balancing, caching, database optimization, and background processing to handle the high traffic.
-
-1. Use a **Load Balancer**
-
-A **Load Balancer** distributes incoming requests across multiple servers.
-
-```text
-1 Million Requests 
-↓ 
-Load Balancer 
-↙   ↓   ↘ 
-Server1 Server2 Server3
-
-For example, sessions can be stored in Redis or a database.
-
-### 2. Use JWT for Authentication
-
-With JWT-based authentication, the client sends the token with each request. For example:
-```text
-Client
-   ↓
-JWT Token
-   ↓
-Any Node.js Server
-```
-
-The server can verify the token without depending on a session stored in that particular server's memory. 
-
-This makes it easier for requests to go to different servers.
-
-### 3. Store Data in a Shared Database
-
-Important application data should not be stored only in the server's memory. 
-
-Instead, use a shared database such as:
-```text
-Server 1 ──┐
-Server 2 ──┼──→ MongoDB
-Server 3 ──┘
-
-Now all servers can access the same application data.
-
-### 4. Store Uploaded Files Outside the Server
-
-If users upload images or documents, I would avoid depending on files stored only on one server. Instead, use shared/object storage so that all application servers can access the uploaded files.
-
-### 5. Avoid In-Memory Application State
-
-For example, avoid keeping important shared data like this:
-```javascript
-const users = [];
-const sessions = {};
-const orders = {};
-```
-
-Because each server has its own memory. 
-
-Instead, use shared systems such as:
-* MongoDB
-* Redis
-* Object Storage
-
-depending on the type of data.
