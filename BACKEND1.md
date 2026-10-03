@@ -440,11 +440,11 @@ output
 Because the first `require()` executes the module and caches its exported value.
 The second `require()` gets the value from the cache instead of executing the module again.
 
-### Q18. What is the difference between process.env, a .env file, and the dotenv package? How should secrets be managed in production ?
+# Q18. What is the difference between process.env, a .env file, and the dotenv package? How should secrets be managed in production ?
 
- ## Answer
+ ### Answer
 
- # Environment Variables Overview
+ ### Environment Variables Overview
 
 These three things are related, but they are not the same.
 
@@ -460,7 +460,124 @@ process.env.PORT
 ```js
 require("dotenv").config();
 ```
+# Q19. What are microtasks vs macrotasks in the Node.js event loop, and how do Promises fit into this model?
 
+# Microtasks vs. Macrotasks in Node.js
+
+Microtasks and macrotasks are different types of asynchronous work in Node.js. 
+
+* **Microtasks** include Promise callbacks such as `.then()`, `.catch()`, and `.finally()`. They run after the current synchronous code finishes and before Node.js continues with the next Event Loop phase.
+* **Macrotask** work includes timers like `setTimeout()` and `setInterval()` and I/O callbacks. 
+
+So, in simple terms, synchronous code runs first, then microtasks are processed, and then the Event Loop continues with its next work.
+
+# Q20. Explain horizontal vs vertical scaling for a Node.js application, and what stateless design choices make horizontal scaling easier.
+
+# Q20. Explain horizontal vs vertical scaling for a Node.js application, and what stateless design choices make horizontal scaling easier.
+
+## Interview Answer
+
+Scaling means increasing the capacity of an application so that it can handle more users and requests.
+
+There are two common ways to scale a Node.js application:
+* Vertical Scaling
+* Horizontal Scaling
+
+---
+
+## 1. Vertical Scaling
+
+Vertical scaling means increasing the power of the existing server.
+
+For example, if our server has:
+* 4 CPU cores
+* 8 GB RAM
+
+we can upgrade it to:
+* 8 CPU cores
+* 16 GB RAM
+
+We are making the same server more powerful.
+
+### Simple Example
+
+**Before:**
+```text
+Client
+  ↓
+Server
+4 CPU + 8 GB RAM
+
+## Advantages & Disadvantages
+
+### Advantages
+* Simple to implement.
+* Usually does not require major application changes.
+* Useful when the current server has enough room for an upgrade.
+
+### Disadvantages
+* There is a limit to how much we can upgrade one machine.
+* A single server can still become a single point of failure.
+* Bigger machines can become expensive.
+
+## 2. Horizontal Scaling
+
+Horizontal scaling means adding more servers instead of making one server bigger.
+
+For example:
+```text
+             Load Balancer
+            /      |      \
+           ↓       ↓       ↓
+       Server 1 Server 2 Server 3
+
+The Load Balancer distributes incoming requests between the servers. 
+
+For example:
+* Request 1 → Server 1
+* Request 2 → Server 2
+* Request 3 → Server 3
+* Request 4 → Server 1
+
+This allows multiple servers to handle traffic at the same time.
+
+### Advantages
+* Can handle more traffic by adding more servers.
+* If one server goes down, other servers can continue serving requests.
+* Easier to grow the application as traffic increases.
+
+### Disadvantages
+* More infrastructure is required.
+* Requests can reach different servers.
+* The application should be designed so that any server can handle any request.
+
+## Why is Stateless Design Important?
+
+Horizontal scaling becomes easier when the Node.js application is stateless.
+
+A stateless application means:
+* The server does not keep important user-specific information only in its own memory.
+
+For example, imagine we have three Node.js servers:
+* Server 1
+* Server 2
+* Server 3
+
+A user's next request could go to any server. Therefore, we should not depend on data stored only inside Server 1's memory.
+
+### 1. Store Sessions Outside the Server
+
+Avoid storing important sessions directly in Node.js memory:
+```javascript
+const sessions = {};
+```
+Client
+   ↓
+Load Balancer
+   ↓
+Server 1 / Server 2 / Server 3
+             ↓
+        Shared Storage
 
 
 
@@ -489,3 +606,54 @@ A **Load Balancer** distributes incoming requests across multiple servers.
 Load Balancer 
 ↙   ↓   ↘ 
 Server1 Server2 Server3
+
+For example, sessions can be stored in Redis or a database.
+
+### 2. Use JWT for Authentication
+
+With JWT-based authentication, the client sends the token with each request. For example:
+```text
+Client
+   ↓
+JWT Token
+   ↓
+Any Node.js Server
+```
+
+The server can verify the token without depending on a session stored in that particular server's memory. 
+
+This makes it easier for requests to go to different servers.
+
+### 3. Store Data in a Shared Database
+
+Important application data should not be stored only in the server's memory. 
+
+Instead, use a shared database such as:
+```text
+Server 1 ──┐
+Server 2 ──┼──→ MongoDB
+Server 3 ──┘
+
+Now all servers can access the same application data.
+
+### 4. Store Uploaded Files Outside the Server
+
+If users upload images or documents, I would avoid depending on files stored only on one server. Instead, use shared/object storage so that all application servers can access the uploaded files.
+
+### 5. Avoid In-Memory Application State
+
+For example, avoid keeping important shared data like this:
+```javascript
+const users = [];
+const sessions = {};
+const orders = {};
+```
+
+Because each server has its own memory. 
+
+Instead, use shared systems such as:
+* MongoDB
+* Redis
+* Object Storage
+
+depending on the type of data.
