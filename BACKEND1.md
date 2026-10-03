@@ -507,6 +507,7 @@ Client
   ↓
 Server
 4 CPU + 8 GB RAM
+```
 
 ## Advantages & Disadvantages
 
@@ -571,6 +572,7 @@ Avoid storing important sessions directly in Node.js memory:
 ```javascript
 const sessions = {};
 ```
+```js
 Client
    ↓
 Load Balancer
@@ -578,7 +580,7 @@ Load Balancer
 Server 1 / Server 2 / Server 3
              ↓
         Shared Storage
-
+```
 
 
 
