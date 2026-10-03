@@ -569,9 +569,8 @@ A user's next request could go to any server. Therefore, we should not depend on
 
 Avoid storing important sessions directly in Node.js memory:
 
-```javascript
 const sessions = {};
-```
+
 ```text
 Client
    ↓
