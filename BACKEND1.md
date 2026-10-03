@@ -453,7 +453,7 @@ These three things are related, but they are not the same.
 console.log(process.env.PORT);
 console.log(process.env.MONGO_URI);
 process.env.PORT
-``
+```
 * **`.env file`** → A file where we can store environment variable values during local development.
 
 * **`dotenv package`** → A package that reads the .env file and loads its values into process.env.
