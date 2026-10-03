@@ -361,20 +361,13 @@ process.memoryUsage()
 console.log(process.memoryUsage());
 ```
 
-This gives information about memory such as:
-
-heapUsed
-heapTotal
-rss
-external
+This gives information about memory such as: heapUsed , heapTotal, rss, external
 
 ### How to Debug a Memory Leak?
 
 ### 1. Use --inspect
 
-I can start the Node.js application with:
-
-node --inspect app.js
+I can start the Node.js application with:-  node --inspect app.js
 
 Then I can open Chrome DevTools and connect to the Node.js process.
 
@@ -419,6 +412,37 @@ Node.js uses the V8 Garbage Collector. If memory usage keeps increasing even aft
 
 
 
+## Q17. Explain how the require() module caching mechanism works, and what circular dependency issues can arise.
+# Node.js CommonJS Module Caching
+
+In Node.js CommonJS, when we use `require()` to load a module, Node.js caches the module after it is loaded for the first time.
+
+If we require the same module again, Node.js usually returns the cached version instead of executing the module code again.
+
+This improves performance and also ensures that the same module instance is generally reused.
+
+# How require() Caching Works
+
+Suppose we have a file:
+
+```javascript
+// counter.js
+let count = 0;
+count++;
+module.exports = count;
+```
+```js
+const count1 = require("./counter");
+const count2 = require("./counter");
+console.log(count1);
+console.log(count2);
+```
+output
+1
+1
+## Why?
+Because the first `require()` executes the module and caches its exported value.
+The second `require()` gets the value from the cache instead of executing the module again.
 
 
 
