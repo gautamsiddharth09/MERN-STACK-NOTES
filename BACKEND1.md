@@ -328,12 +328,99 @@ app.use((err, req, res, next) => {
   });
 });
 ```
-If an error is passed using:
-
-next(error);
+If an error is passed using: next(error);
 
 Express skips normal middleware and moves to the error-handling middleware.
 
+### Q16. What causes memory leaks in a long-running Node.js server, and how would you detect and debug one (heap snapshots, --inspect, etc.)?
+A memory leak happens when a Node.js application keeps holding references to objects that are no longer needed. Because those objects are still referenced, the Garbage Collector (GC) cannot remove them, so memory usage keeps increasing over time.
+
+## Common Causes of Memory Leaks
+
+Some common causes are:
+
+* **Global variables**: Storing unnecessary data in global variables can keep objects in memory.
+* **Uncleared timers**: `setInterval()` or `setTimeout()` can keep references alive if they are not cleared when no longer needed.
+* **Event listeners**: Adding event listeners repeatedly without removing them can cause memory to keep growing.
+* **Large caches**: Keeping unlimited data in an in-memory cache can consume a lot of memory.
+* **Closures**: A closure can keep references to large objects even when those objects are no longer needed.
+* **Long-lived references**: Objects stored in arrays, maps, or other long-lived structures can remain in memory if they are never removed.
+
+## How to Detect a Memory Leak?
+
+First, I would monitor the application's memory usage over time.
+
+If memory keeps increasing and does not come down after Garbage Collection, it can be a sign of a memory leak.
+
+Node.js provides:
+
+```javascript
+process.memoryUsage()
+```
+```js
+console.log(process.memoryUsage());
+```
+
+This gives information about memory such as:
+
+heapUsed
+heapTotal
+rss
+external
+
+# How to Debug a Memory Leak?
+
+## 1. Use --inspect
+
+I can start the Node.js application with:
+
+node --inspect app.js
+
+How to Debug a Memory Leak?
+1. Use --inspect
+
+I can start the Node.js application with:
+
+node --inspect app.js
+
+Then I can open Chrome DevTools and connect to the Node.js process.
+
+The Memory tab can be used to investigate memory usage.
+
+2. Take Heap Snapshots
+
+A heap snapshot shows the objects currently stored in the JavaScript heap.
+
+I can take a heap snapshot, perform some requests or operations, and then take another snapshot.
+
+For example:
+
+Heap Snapshot 1
+      ↓
+Send many requests
+      ↓
+Heap Snapshot 2
+      ↓
+Compare
+
+If certain objects keep increasing and are not being garbage collected, I can investigate why those objects are still referenced.
+
+3. Compare Heap Snapshots
+
+I would compare multiple snapshots and look for:
+
+Objects that keep increasing
+Large objects consuming memory
+Unexpected retained objects
+References preventing Garbage Collection
+
+This helps identify the source of the leak.
+
+4. Check Garbage Collection
+
+Node.js uses the V8 Garbage Collector.
+
+If memory usage keeps increasing even after Garbage Collection, I would investigate which objects are still being referenced.
 
 
 
