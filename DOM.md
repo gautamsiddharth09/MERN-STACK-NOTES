@@ -2097,70 +2097,151 @@ animals.forEach(animal => {
 
 > Polymorphism allows different classes to respond differently to the same method. Method overriding is a form of polymorphism - child class provides its own implementation of parent method."
 
-# One Minute Revisiov
 
+
+# JavaScript DOM & OOP — Quick Revision Notes
+
+## DOM
+
+```text
 DOM
 → Browser Web API
 → HTML as Tree
+```
 
-Selection
-→ querySelector = First
-→ querySelectorAll = All
-→ HTMLCollection = Live
-→ NodeList = Static
+---
 
-Content
-→ textContent = Plain text
-→ innerHTML = HTML
-→ innerText = Visible text
+## Selection
 
-Events
-→ addEventListener = Preferred
-→ target = Triggering element
-→ currentTarget = Listener element
+```text
+querySelector = First
+querySelectorAll = All
+HTMLCollection = Live
+NodeList = Static
+```
 
-Event Flow
-→ Capturing ↓
-→ Target 🎯
-→ Bubbling ↑
+---
 
-Delegation
-→ Parent listener
-→ Uses bubbling
+## Content
 
-preventDefault
-→ Browser default action stop
+```text
+textContent = Plain text
+innerHTML = HTML
+innerText = Visible text
+```
 
-stopPropagation
-→ Event propagation stop
+---
 
-window
-→ Browser
+## Events
 
-document
-→ DOM
+```text
+addEventListener = Preferred
+target = Triggering element
+currentTarget = Listener element
+```
 
-Storage
-→ localStorage = Persistent
-→ sessionStorage = Tab/session
-→ cookies = Sent to server
+---
 
-OOP
-→ Encapsulation
-→ Abstraction
-→ Inheritance
-→ Polymorphism
+## Event Flow
 
-Prototype
-→ JS inheritance mechanism
-→ Shared methods
+```text
+Capturing ↓
+Target 🎯
+Bubbling ↑
+```
 
-Prototype Chain
-→ Object → Prototype → Object.prototype → null
+---
 
+## Delegation
+
+```text
+Parent listener
+Uses bubbling
+```
+
+---
+
+## preventDefault
+
+```text
+Browser default action stop
+```
+
+---
+
+## stopPropagation
+
+```text
+Event propagation stop
+```
+
+---
+
+## window
+
+```text
+Browser
+```
+
+---
+
+## document
+
+```text
+DOM
+```
+
+---
+
+## Storage
+
+```text
+localStorage = Persistent
+sessionStorage = Tab/session
+cookies = Sent to server
+```
+
+---
+
+# OOP
+
+```text
+Encapsulation
+Abstraction
 Inheritance
-→ extends
-→ super()
-
 Polymorphism
-→ Same method → Different behavior
+```
+
+---
+
+## Prototype
+
+```text
+JS inheritance mechanism
+Shared methods
+```
+
+---
+
+## Prototype Chain
+
+```text
+Object → Prototype → Object.prototype → null
+```
+
+---
+
+## Inheritance
+
+```text
+extends
+super()
+```
+
+---
+
+## Polymorphism
+
+```text
+Same method → Different behavior
+```
