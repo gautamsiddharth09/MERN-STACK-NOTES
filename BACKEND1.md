@@ -407,13 +407,9 @@ This helps identify the source of the leak.
 Node.js uses the V8 Garbage Collector. If memory usage keeps increasing even after Garbage Collection, I would investigate which objects are still being referenced.
 
 
-
-
-
-
-
 ## Q17. Explain how the require() module caching mechanism works, and what circular dependency issues can arise.
-# Node.js CommonJS Module Caching
+
+### Node.js CommonJS Module Caching
 
 In Node.js CommonJS, when we use `require()` to load a module, Node.js caches the module after it is loaded for the first time.
 
@@ -421,7 +417,7 @@ If we require the same module again, Node.js usually returns the cached version 
 
 This improves performance and also ensures that the same module instance is generally reused.
 
-# How require() Caching Works
+### How require() Caching Works
 
 Suppose we have a file:
 
@@ -438,11 +434,32 @@ console.log(count1);
 console.log(count2);
 ```
 output
+1,
 1
-1
-## Why?
+### Why?
 Because the first `require()` executes the module and caches its exported value.
 The second `require()` gets the value from the cache instead of executing the module again.
+
+### Q18. What is the difference between process.env, a .env file, and the dotenv package? How should secrets be managed in production ?
+
+ ## Answer
+
+ # Environment Variables Overview
+
+These three things are related, but they are not the same.
+
+* **`process.env`** → Node.js object used to access environment variables.
+```js
+console.log(process.env.PORT);
+console.log(process.env.MONGO_URI);
+process.env.PORT
+``
+* **`.env file`** → A file where we can store environment variable values during local development.
+
+* **`dotenv package`** → A package that reads the .env file and loads its values into process.env.
+```js
+require("dotenv").config();
+```
 
 
 
