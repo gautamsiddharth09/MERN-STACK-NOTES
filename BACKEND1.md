@@ -693,53 +693,9 @@ depending on the type of data.
 
 ---
 
-# Simple Architecture
-
-A horizontally scalable Node.js application can look like this:
-
-```text
-                 Clients
-                    ↓
-              Load Balancer
-             /      |      \
-            ↓       ↓       ↓
-        Node.js  Node.js  Node.js
-        Server 1 Server 2 Server 3
-             \      |      /
-              \     |     /
-               ↓    ↓    ↓
-             MongoDB
-                +
-              Redis
-```
-
 The important point is that the Node.js servers are mostly **stateless** and use shared services for data that needs to be available to all servers.
 
----
 
-# ⭐ Easy Way to Remember
-
-### Vertical Scaling
-
-> **Make one server bigger.**
-
-```text
-1 Server → More CPU + More RAM
-```
-
-### Horizontal Scaling
-
-> **Add more servers.**
-
-```text
-1 Server → 2 Servers → 3 Servers
-```
-
-### Stateless Design
-
-> **Don't keep important user data only inside one server's memory. Use shared storage such as a database or Redis.**
-
----
 
 ## One-Line Interview Answer
 
