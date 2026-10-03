@@ -531,7 +531,7 @@ For example:
             /      |      \
            ↓       ↓       ↓
        Server 1 Server 2 Server 3
-       ```
+      
 
 The Load Balancer distributes incoming requests between the servers. 
 
@@ -570,10 +570,11 @@ A user's next request could go to any server. Therefore, we should not depend on
 ### 1. Store Sessions Outside the Server
 
 Avoid storing important sessions directly in Node.js memory:
+
 ```javascript
 const sessions = {};
 ```
-```js
+```text
 Client
    ↓
 Load Balancer
@@ -581,7 +582,7 @@ Load Balancer
 Server 1 / Server 2 / Server 3
              ↓
         Shared Storage
-```
+
 
 
 
