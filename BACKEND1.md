@@ -319,6 +319,7 @@ Error-handling middleware has 4 parameters:
 
 The first parameter, `err`, tells Express that this middleware is specifically for handling errors.
 
+```js
 app.use((err, req, res, next) => {
   console.error(err);
 
@@ -326,7 +327,7 @@ app.use((err, req, res, next) => {
     message: "Something went wrong"
   });
 });
-
+```
 If an error is passed using:
 
 next(error);
