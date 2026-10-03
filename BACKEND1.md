@@ -262,24 +262,108 @@ Worker Thread ka main use hai CPU-intensive JavaScript work ko main thread se al
 
 Worker Threads are used to run JavaScript code in separate threads inside a **Node.js** process. They are mainly useful for CPU-intensive tasks because they prevent the main thread from being blocked. Clustering creates multiple **Node.js** processes, usually to utilize multiple CPU cores and handle more server traffic. Child processes also create separate processes, but they are mainly used when we want to run another program, command, or separate **Node.js** process.
 
-
-
-
-
-
-
-
-
-
-
-## How to Handle 1 Million Requests in an Express.js Application
+## Q15. What is middleware in Express.js? Explain how the request-response cycle flows through next() and how error-handling middleware differs from regular middleware
 
 ### Answer
 
-If an application receives around 1 million requests and the server load is very high, how would you handle it?
+Middleware in Express.js is a function that runs between the client request and the final response.
+
+It has access to the request (`req`), response (`res`), and the `next()` function.
+
+Middleware is commonly used for things like:
+* Authentication
+* Logging
+* Validation
+* Request processing
+* Error handling
+
+---
+
+## How does next() work?
+
+When a request comes to the Express server, it passes through middleware one by one.
+
+For example:
+
+```javascript
+app.use((req, res, next) => {
+  console.log("Middleware 1");
+
+  next();
+});
+
+app.use((req, res, next) => {
+  console.log("Middleware 2");
+
+  next();
+});
+
+app.get("/users", (req, res) => {
+  res.json({ message: "Users data" });
+});
+
+`next()` tells Express: "I have finished my work, now move to the next middleware or route handler."
+
+If middleware does not call `next()` and also does not send a response, the request can remain stuck.
+
+## Error-Handling Middleware
+
+Error-handling middleware is different from normal middleware.
+
+Normal middleware has 3 parameters:
+* `(req, res, next)`
+
+Error-handling middleware has 4 parameters:
+* `(err, req, res, next)`
+
+The first parameter, `err`, tells Express that this middleware is specifically for handling errors.
+
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  res.status(500).json({
+    message: "Something went wrong"
+  });
+});
+
+If an error is passed using:
+
+next(error);
+
+Express skips normal middleware and moves to the error-handling middleware.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# How to Handle 1 Million Requests in an Express.js Application
+
+## Q1. If an application receives around 1 million requests and the server load is very high, how would you handle it?
+
+### Answer
 
 If my **Express.js** application receives around 1 million requests, I would not depend on a single server. I would use scaling, load balancing, caching, database optimization, and background processing to handle the high traffic.
 
-### 1. Use a Load Balancer
+1. Use a **Load Balancer**
 
-A Load Balancer distributes incoming requests across multiple servers.
+A **Load Balancer** distributes incoming requests across multiple servers.
+
+```text
+1 Million Requests 
+↓ 
+Load Balancer 
+↙   ↓   ↘ 
+Server1 Server2 Server3
