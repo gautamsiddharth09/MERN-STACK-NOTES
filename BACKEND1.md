@@ -75,7 +75,7 @@ The check phase executes callbacks scheduled by `setImmediate()`.
 
 The close callbacks phase handles callbacks for closed resources, such as sockets.
 
-```js
+
 socket.on("close", () => {
   console.log("Socket closed");
 });
