@@ -2096,3 +2096,71 @@ animals.forEach(animal => {
 # Interview tip
 
 > Polymorphism allows different classes to respond differently to the same method. Method overriding is a form of polymorphism - child class provides its own implementation of parent method."
+
+# One Minute Revisiov
+
+DOM
+→ Browser Web API
+→ HTML as Tree
+
+Selection
+→ querySelector = First
+→ querySelectorAll = All
+→ HTMLCollection = Live
+→ NodeList = Static
+
+Content
+→ textContent = Plain text
+→ innerHTML = HTML
+→ innerText = Visible text
+
+Events
+→ addEventListener = Preferred
+→ target = Triggering element
+→ currentTarget = Listener element
+
+Event Flow
+→ Capturing ↓
+→ Target 🎯
+→ Bubbling ↑
+
+Delegation
+→ Parent listener
+→ Uses bubbling
+
+preventDefault
+→ Browser default action stop
+
+stopPropagation
+→ Event propagation stop
+
+window
+→ Browser
+
+document
+→ DOM
+
+Storage
+→ localStorage = Persistent
+→ sessionStorage = Tab/session
+→ cookies = Sent to server
+
+OOP
+→ Encapsulation
+→ Abstraction
+→ Inheritance
+→ Polymorphism
+
+Prototype
+→ JS inheritance mechanism
+→ Shared methods
+
+Prototype Chain
+→ Object → Prototype → Object.prototype → null
+
+Inheritance
+→ extends
+→ super()
+
+Polymorphism
+→ Same method → Different behavior
