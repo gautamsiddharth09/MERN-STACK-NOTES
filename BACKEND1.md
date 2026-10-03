@@ -1,4 +1,3 @@
-# Node.js Interview Notes
 
 # Node.js Notes
 
@@ -79,7 +78,7 @@ The close callbacks phase handles callbacks for closed resources, such as socket
 socket.on("close", () => {
   console.log("Socket closed");
 });
-# Node.js Interview Notes
+
 
 ## Q3. What is the difference between blocking and non-blocking I/O? How does Node.js achieve non-blocking behavior on a single thread?
 
@@ -107,7 +106,7 @@ So, even though **Node.js** runs JavaScript on a single main thread, it can hand
 `setTimeout(fn, 0)` schedules the callback for the Timers phase, while `setImmediate()` schedules the callback for the Check phase.
 
 `process.nextTick()` generally runs before both of them. The order between `setTimeout(fn, 0)` and `setImmediate()` is not always fixed when they are called from the main script. However, inside an I/O callback, `setImmediate()` normally runs before `setTimeout(fn, 0)`.
-# Node.js Interview Notes
+
 
 ## Q5. What is libuv, and what role does it play in Node.js's concurrency model?
 
@@ -134,8 +133,7 @@ There are four main types of streams:
 - **Transform Stream** can read data, change or process it, and then produce new data. For example, gzip compression.
 
 The main benefit of streams is that they save memory because we don't need to load the complete data at once.
-# Node.js Interview Notes
-# Node.js Interview Notes
+
 
 ## Q7. What is the Buffer class in Node.js, and why is it needed when JavaScript already has strings?
 
@@ -168,7 +166,7 @@ For example, when we read an image or a file without specifying an encoding, **N
 - This helps tools analyze dependencies and perform optimizations such as tree shaking.
 
 Example:
-```js
+
 // math.js
 export const add = () => {};
 export const subtract = () => {};
@@ -191,7 +189,7 @@ export const multiply = () => {};
 In the callback approach, we usually use an error-first callback.
 
 Example:
-```js
+
 fs.readFile("data.txt", "utf8", (err, data) => {
 if (err) {
 console.log("Error:", err);
@@ -199,7 +197,7 @@ return;
 }
 console.log(data);
 });
-# Node.js Interview Notes
+
 
 ## Q11. Explain the EventEmitter class. How would you build a custom class that emits and listens to events?
 
@@ -211,7 +209,7 @@ console.log(data);
 - handle events when they occur.
 
 Example:
-```js
+
 const EventEmitter = require("events");
 const emitter = new EventEmitter();
 
@@ -220,7 +218,19 @@ emitter.on("registered", () => {
 });
 
 emitter.emit("registered");
-# Node.js Interview Notes
+
+
+## Q12. What are child processes in Node.js? Differentiate between fork(), spawn(), exec(), and execFile()?
+
+### Answer
+
+Child processes allow our **Node.js** or Express application to create another process to do some work separately. We can use them to run external commands, programs, or heavy tasks.
+
+- `spawn()` is used when we want to receive output continuously.
+- `exec()` is used to run a command and get the complete output.
+- `execFile()` is used to run a specific executable directly.
+- `fork()` is used to create another **Node.js** process, and the parent and child can communicate using messages.
+
 
 ## Q13. What is clustering in Node.js, and how does the cluster module help utilize multi-core CPUs?
 
@@ -260,7 +270,7 @@ Worker Threads are used to run JavaScript code in separate threads inside a **No
 
 
 
-# Node.js Interview Notes
+
 
 ## How to Handle 1 Million Requests in an Express.js Application
 
