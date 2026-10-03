@@ -531,6 +531,7 @@ For example:
             /      |      \
            ↓       ↓       ↓
        Server 1 Server 2 Server 3
+       ```
 
 The Load Balancer distributes incoming requests between the servers. 
 
