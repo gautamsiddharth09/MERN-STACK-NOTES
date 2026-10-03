@@ -471,105 +471,145 @@ Microtasks and macrotasks are different types of asynchronous work in Node.js.
 
 So, in simple terms, synchronous code runs first, then microtasks are processed, and then the Event Loop continues with its next work.
 
+
 # Q20. Explain horizontal vs vertical scaling for a Node.js application, and what stateless design choices make horizontal scaling easier.
 
 ## Interview Answer
 
-Scaling means increasing the capacity of an application so that it can handle more users and requests.
+**Scaling means increasing the capacity of an application so that it can handle more users and requests.**
 
 There are two common ways to scale a Node.js application:
-* Vertical Scaling
-* Horizontal Scaling
+
+1. **Vertical Scaling**
+2. **Horizontal Scaling**
 
 ---
 
 ## 1. Vertical Scaling
 
-Vertical scaling means increasing the power of the existing server.
+Vertical scaling means **increasing the power of the existing server**.
 
 For example, if our server has:
-* 4 CPU cores
-* 8 GB RAM
+
+```text
+4 CPU cores
+8 GB RAM
+```
 
 we can upgrade it to:
-* 8 CPU cores
-* 16 GB RAM
 
-We are making the same server more powerful.
+```text
+8 CPU cores
+16 GB RAM
+```
+
+We are making the **same server more powerful**.
 
 ### Simple Example
 
-**Before:**
 ```text
+Before:
+
 Client
   ↓
 Server
 4 CPU + 8 GB RAM
 
 
-## Advantages & Disadvantages
+After:
+
+Client
+  ↓
+More Powerful Server
+8 CPU + 16 GB RAM
+```
 
 ### Advantages
+
 * Simple to implement.
 * Usually does not require major application changes.
 * Useful when the current server has enough room for an upgrade.
 
 ### Disadvantages
+
 * There is a limit to how much we can upgrade one machine.
 * A single server can still become a single point of failure.
 * Bigger machines can become expensive.
 
-## 2. Horizontal Scaling
+---
 
-Horizontal scaling means adding more servers instead of making one server bigger.
+# 2. Horizontal Scaling
+
+Horizontal scaling means **adding more servers instead of making one server bigger**.
 
 For example:
+
 ```text
              Load Balancer
             /      |      \
            ↓       ↓       ↓
        Server 1 Server 2 Server 3
-      
+```
 
-The Load Balancer distributes incoming requests between the servers. 
+The **Load Balancer** distributes incoming requests between the servers.
 
 For example:
-* Request 1 → Server 1
-* Request 2 → Server 2
-* Request 3 → Server 3
-* Request 4 → Server 1
+
+```text
+Request 1 → Server 1
+Request 2 → Server 2
+Request 3 → Server 3
+Request 4 → Server 1
+```
 
 This allows multiple servers to handle traffic at the same time.
 
 ### Advantages
+
 * Can handle more traffic by adding more servers.
 * If one server goes down, other servers can continue serving requests.
 * Easier to grow the application as traffic increases.
 
 ### Disadvantages
+
 * More infrastructure is required.
 * Requests can reach different servers.
 * The application should be designed so that any server can handle any request.
 
-## Why is Stateless Design Important?
 
-Horizontal scaling becomes easier when the Node.js application is stateless.
+# Why is Stateless Design Important?
+
+Horizontal scaling becomes easier when the Node.js application is **stateless**.
 
 A stateless application means:
-* The server does not keep important user-specific information only in its own memory.
+
+> **The server does not keep important user-specific information only in its own memory.**
 
 For example, imagine we have three Node.js servers:
-* Server 1
-* Server 2
-* Server 3
 
-A user's next request could go to any server. Therefore, we should not depend on data stored only inside Server 1's memory.
+```text
+Server 1
+Server 2
+Server 3
+```
 
-### 1. Store Sessions Outside the Server
+A user's next request could go to **any server**.
+
+Therefore, we should not depend on data stored only inside Server 1's memory.
+
+---
+
+## 1. Store Sessions Outside the Server
 
 Avoid storing important sessions directly in Node.js memory:
 
+```js
 const sessions = {};
+```
+
+If the next request goes to another server, that server will not have the session data.
+
+Instead, use a shared storage system such as:
 
 ```text
 Client
@@ -579,12 +619,128 @@ Load Balancer
 Server 1 / Server 2 / Server 3
              ↓
         Shared Storage
+```
 
+For example, sessions can be stored in **Redis** or a database.
 
+---
 
+## 2. Use JWT for Authentication
 
+With JWT-based authentication, the client sends the token with each request.
 
+For example:
 
+```text
+Client
+   ↓
+JWT Token
+   ↓
+Any Node.js Server
+```
 
+The server can verify the token without depending on a session stored in that particular server's memory.
 
+This makes it easier for requests to go to different servers.
 
+---
+
+## 3. Store Data in a Shared Database
+
+Important application data should not be stored only in the server's memory.
+
+Instead, use a shared database such as:
+
+```text
+Server 1 ──┐
+Server 2 ──┼──→ MongoDB
+Server 3 ──┘
+```
+
+Now all servers can access the same application data.
+
+---
+
+## 4. Store Uploaded Files Outside the Server
+
+If users upload images or documents, I would avoid depending on files stored only on one server.
+
+Instead, use shared/object storage so that all application servers can access the uploaded files.
+
+---
+
+## 5. Avoid In-Memory Application State
+
+For example, avoid keeping important shared data like this:
+
+```js
+const users = [];
+const sessions = {};
+const orders = {};
+```
+
+Because each server has its **own memory**.
+
+Instead, use shared systems such as:
+
+```text
+MongoDB
+Redis
+Object Storage
+```
+
+depending on the type of data.
+
+---
+
+# Simple Architecture
+
+A horizontally scalable Node.js application can look like this:
+
+```text
+                 Clients
+                    ↓
+              Load Balancer
+             /      |      \
+            ↓       ↓       ↓
+        Node.js  Node.js  Node.js
+        Server 1 Server 2 Server 3
+             \      |      /
+              \     |     /
+               ↓    ↓    ↓
+             MongoDB
+                +
+              Redis
+```
+
+The important point is that the Node.js servers are mostly **stateless** and use shared services for data that needs to be available to all servers.
+
+---
+
+# ⭐ Easy Way to Remember
+
+### Vertical Scaling
+
+> **Make one server bigger.**
+
+```text
+1 Server → More CPU + More RAM
+```
+
+### Horizontal Scaling
+
+> **Add more servers.**
+
+```text
+1 Server → 2 Servers → 3 Servers
+```
+
+### Stateless Design
+
+> **Don't keep important user data only inside one server's memory. Use shared storage such as a database or Redis.**
+
+---
+
+## One-Line Interview Answer
+
+> "Vertical scaling means increasing the CPU or RAM of an existing server, while horizontal scaling means adding more servers and distributing requests using a load balancer. To make horizontal scaling easier, I would keep the Node.js application stateless by avoiding important in-memory session or user data, using JWT or shared session storage, keeping application data in a shared database, and storing uploaded files in shared storage. This allows any server to handle any incoming request."
