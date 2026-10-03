@@ -332,10 +332,10 @@ If an error is passed using: next(error);
 
 Express skips normal middleware and moves to the error-handling middleware.
 
-### Q16. What causes memory leaks in a long-running Node.js server, and how would you detect and debug one (heap snapshots, --inspect, etc.)?
+## Q16. What causes memory leaks in a long-running Node.js server, and how would you detect and debug one (heap snapshots, --inspect, etc.)?
 A memory leak happens when a Node.js application keeps holding references to objects that are no longer needed. Because those objects are still referenced, the Garbage Collector (GC) cannot remove them, so memory usage keeps increasing over time.
 
-## Common Causes of Memory Leaks
+### Common Causes of Memory Leaks
 
 Some common causes are:
 
@@ -346,7 +346,7 @@ Some common causes are:
 * **Closures**: A closure can keep references to large objects even when those objects are no longer needed.
 * **Long-lived references**: Objects stored in arrays, maps, or other long-lived structures can remain in memory if they are never removed.
 
-## How to Detect a Memory Leak?
+### How to Detect a Memory Leak?
 
 First, I would monitor the application's memory usage over time.
 
@@ -368,9 +368,9 @@ heapTotal
 rss
 external
 
-# How to Debug a Memory Leak?
+### How to Debug a Memory Leak?
 
-## 1. Use --inspect
+### 1. Use --inspect
 
 I can start the Node.js application with:
 
