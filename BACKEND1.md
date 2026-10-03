@@ -285,7 +285,7 @@ When a request comes to the Express server, it passes through middleware one by 
 
 For example:
 
-
+```javascript
 app.use((req, res, next) => {
   console.log("Middleware 1");
 
@@ -301,7 +301,7 @@ app.use((req, res, next) => {
 app.get("/users", (req, res) => {
   res.json({ message: "Users data" });
 });
-
+```
 
 `next()` tells Express: "I have finished my work, now move to the next middleware or route handler."
 
