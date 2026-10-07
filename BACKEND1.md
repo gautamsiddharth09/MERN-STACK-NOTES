@@ -189,7 +189,7 @@ export const multiply = () => {};
 In the callback approach, we usually use an error-first callback.
 
 Example:
-
+```js
 fs.readFile("data.txt", "utf8", (err, data) => {
 if (err) {
 console.log("Error:", err);
@@ -197,7 +197,9 @@ return;
 }
 console.log(data);
 });
+```
 
+In callbacks, errors are usually handled using the error-first callback pattern. Promises use .catch() to handle rejected Promises, while async/await commonly uses try...catch. An unhandled Promise rejection in modern Node.js is treated as an uncaught exception by default and can terminate the Node.js process, so Promise rejections should always be handled appropriately.
 
 ## Q11. Explain the EventEmitter class. How would you build a custom class that emits and listens to events?
 
