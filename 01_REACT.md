@@ -1666,6 +1666,7 @@ oldFunction !== newFunction
 
 So prop change maan lega.
 
+
 Result:
 
 - ❌ React.memo fail

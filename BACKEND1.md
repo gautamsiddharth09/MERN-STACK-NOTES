@@ -212,13 +212,14 @@ In callbacks, errors are usually handled using the error-first callback pattern.
 
 Example:
 
+```js
 const EventEmitter = require("events");
 const emitter = new EventEmitter();
 
 emitter.on("registered", () => {
   console.log("Send welcome email");
 });
-
+```
 emitter.emit("registered");
 
 
