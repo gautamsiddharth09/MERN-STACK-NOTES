@@ -7,6 +7,7 @@
 
 Node.js is a JavaScript runtime environment that allows us to execute JavaScript outside the browser, mainly for backend and server-side development. It uses Google's **V8** JavaScript engine to execute JavaScript code.
 
+
 **Node.js** uses a single-threaded event-driven architecture with a **non-blocking I/O** model. It uses the **Event Loop** and underlying system mechanisms to handle multiple I/O operations efficiently without blocking the main JavaScript thread.
 
 The main difference from a browser is the environment and the available APIs. In a browser, JavaScript runs inside the browser and has access to APIs like `DOM`, `window`, and `document`. In **Node.js**, there is no `DOM` or `window`; instead, Node provides server-side APIs for things like file systems, networking, HTTP servers, streams, and processes.
