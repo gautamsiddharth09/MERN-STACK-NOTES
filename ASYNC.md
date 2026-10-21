@@ -2334,6 +2334,8 @@ npx create-react-app my-app
 
 # Throttling & Debouncing
 
+
+
 ## Q30: What is Debouncing? Implement it.
 
 ### How to Answer
