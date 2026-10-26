@@ -48,6 +48,31 @@ In easy words: Docker helps your app run in a similar way on your laptop, anothe
 
 ---
 
+## Images and Containers
+Docker Image: What is it?
+A Docker image is a read-only template or package used to create containers. It contains the application code and the files, libraries, and dependencies needed to run the app.
+
+For a Node.js / Express backend, an image may include:
+- Node.js runtime
+- Your backend code
+- package.json and installed dependencies
+- The default command to start the server
+Think of an image as a recipe or app package. The image itself is not the running server.
+Docker Container: What is it?
+A Docker container is an instance created from an image. When you start a container, your application runs inside it.
+
+Think of an image as a recipe and a container as the meal prepared from that recipe. You can create multiple containers from the same image.
+Visual flow
+Dockerfile (instructions)
+        |
+        | docker build
+        v
+Docker Image (template/package)
+        |
+        | docker run
+        v
+Docker Container (running app)
+
 ## 3. Important Docker words
 
 | Word | Easy meaning | MERN example |
