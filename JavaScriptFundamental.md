@@ -478,13 +478,13 @@ Interview tip: When asked about truthy/falsy, remember the 8 falsy values - ever
 
 ### How to Answer:
 
-"In JavaScript, every value has an inherent boolean nature - it's either truthy or falsy. This matters in conditions like if statements, where JavaScript automatically converts values to boolean.
+"In JavaScript, every value has an inherent boolean nature - it's  either truthy or falsy. This matters in conditions like if statements, where JavaScript automatically converts values to boolean.
 
 ### Falsy values (only 8):
 
 There are exactly 8 falsy values in JavaScript:
 
-- false - the boolean false
+- false - the boolean  false
 - 0 - the number zero
 - -0 - negative zero
 - 0n - BigInt zero
