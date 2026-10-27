@@ -51,6 +51,14 @@ In easy words: Docker helps your app run in a similar way on your laptop, anothe
 ## Images and Containers
 Docker Image: What is it?
 A Docker image is a read-only template or package used to create containers. It contains the application code and the files, libraries, and dependencies needed to run the app.
+- Container ko create/run krne  ke lie container ko image ki need hoti hai, ek image ke kai sare container  run kar skte hain.
+- Image is like a (os) and Image contain:-
+- App
+- Node
+- Package Dependencies
+- Dependencies
+- Configs
+
 
 For a Node.js / Express backend, an image may include:
 - Node.js runtime
@@ -107,7 +115,7 @@ Run these in your terminal. Replace example names or IDs when needed.
 | Command | What it does |
 |---|---|
 | `docker --version` | Shows Docker version |
-| `docker pull node:22-alpine` | Downloads a Node image |
+| `docker pull ubuntu` | Downloads a Node image |
 | `docker images` | Lists local images |
 | `docker ps` | Shows running containers |
 | `docker ps -a` | Shows all containers, including stopped ones |
