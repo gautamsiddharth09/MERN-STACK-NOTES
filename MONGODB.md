@@ -1,5 +1,5 @@
 # MongoDB Notes
-### 1. The _id Field
+## 1. The _id Field
 Every document in a MongoDB collection has a unique _id.
 - Unique ID: Two documents in the same collection cannot have the same _id.
 - Default Type: MongoDB usually creates _id as an ObjectId if you do not provide one.
@@ -160,18 +160,2041 @@ If the second document causes a duplicate key error, MongoDB attempts to insert 
 - A failed document is not inserted, but other valid documents may still be inserted.
 - Unordered inserts do not guarantee insertion order.
 --------------------------------------------------------------------------------------------------------------------------------------------------
+## 7. MongoDB Operators
 
+### What Are Operators?
+
+Operators are special keywords that start with `$`. They help us **filter, compare, and update data** in MongoDB.
+
+**Example:**
+
+```javascript
+db.users.find({ age: { $gt: 18 } })
+```
+
+This finds users whose age is greater than `18`.
+
+---
+
+### 7.1 Comparison Operators
+
+Used to compare values.
+
+| Operator | Meaning |
+|---|---|
+| `$eq` | Equal to |
+| `$ne` | Not equal to |
+| `$gt` | Greater than |
+| `$lt` | Less than |
+| `$gte` | Greater than or equal to |
+| `$lte` | Less than or equal to |
+| `$in` | Matches any value in a list |
+| `$nin` | Does not match any value in a list |
+
+**Example:**
+
+```javascript
+db.users.find({ age: { $gt: 25 } })
+db.users.find({ role: { $in: ["admin", "user"] } })
+```
+
+---
+
+### 7.2 Logical Operators
+
+Used to combine or change query conditions.
+
+| Operator | Meaning |
+|---|---|
+| `$and` | All conditions must be true |
+| `$or` | At least one condition must be true |
+| `$not` | Reverses a condition |
+| `$nor` | None of the conditions must be true |
+
+**Example:**
+
+```javascript
+db.users.find({
+  $or: [
+    { age: { $lt: 18 } },
+    { age: { $gt: 60 } }
+  ]
+})
+```
+
+This finds users younger than `18` or older than `60`.
+
+---
+
+### 7.3 Element Operators
+
+Used to check whether a field exists or has a specific data type.
+
+| Operator | Meaning |
+|---|---|
+| `$exists` | Checks whether a field exists |
+| `$type` | Checks the BSON data type of a field |
+
+**Examples:**
+
+```javascript
+db.users.find({ phone: { $exists: true } })
+db.users.find({ age: { $type: "int" } })
+```
+
+---
+
+### 7.4 Evaluation Operators
+
+Used for pattern matching, expressions, and mathematical conditions.
+
+| Operator | Meaning |
+|---|---|
+| `$regex` | Matches a string pattern |
+| `$expr` | Uses aggregation expressions in a query |
+| `$mod` | Matches numbers using a modulo condition |
+
+**Examples:**
+
+```javascript
+db.users.find({ name: { $regex: "^A" } })
+db.users.find({ age: { $mod: [5, 0] } })
+```
+
+- `$regex`: Finds names starting with `A`.
+- `$mod`: Finds ages divisible by `5`.
+
+---
+
+### 7.5 Array Query Operators
+
+Used to find documents based on array values.
+
+| Operator | Meaning |
+|---|---|
+| `$all` | Array must contain all specified values |
+| `$size` | Matches an array with an exact length |
+| `$elemMatch` | Matches an array containing an element that meets the conditions |
+
+**Examples:**
+
+```javascript
+db.posts.find({ tags: { $size: 3 } })
+
+db.posts.find({
+  tags: { $all: ["mongodb", "database"] }
+})
+```
+
+The first query finds posts with exactly three tags. The second finds posts containing both specified tags.
+
+---
+
+### 7.6 Update Operators
+
+Used to modify document fields.
+
+| Operator | Meaning |
+|---|---|
+| `$set` | Sets a field's value |
+| `$unset` | Removes a field |
+| `$inc` | Increases or decreases a number |
+| `$mul` | Multiplies a number |
+| `$rename` | Renames a field |
+| `$min` | Updates a field only if the new value is smaller |
+| `$max` | Updates a field only if the new value is larger |
+
+**Example: Increase stock by 10**
+
+```javascript
+db.products.updateOne(
+  { name: "Laptop" },
+  { $inc: { stock: 10 } }
+)
+```
+
+**Example: Update a user's city**
+
+```javascript
+db.users.updateOne(
+  { name: "Rahul" },
+  { $set: { city: "Patna" } }
+)
+```
+
+---
+
+### 7.7 Array Update Operators
+
+Used to add or remove elements from arrays.
+
+| Operator | Meaning |
+|---|---|
+| `$push` | Adds an element to an array |
+| `$addToSet` | Adds an element only if it is not already present |
+| `$pull` | Removes matching elements from an array |
+
+**Example: Add a skill without duplicates**
+
+```javascript
+db.users.updateOne(
+  { name: "Rahul" },
+  { $addToSet: { skills: "MongoDB" } }
+)
+```
+
+---
+
+### Quick Revision
+
+- **Comparison:** `$gt`, `$lt`, `$eq`, `$in`
+- **Logical:** `$and`, `$or`, `$not`, `$nor`
+- **Element:** `$exists`, `$type`
+- **Evaluation:** `$regex`, `$expr`, `$mod`
+- **Array query:** `$all`, `$size`, `$elemMatch`
+- **Update:** `$set`, `$unset`, `$inc`, `$mul`
+- **Array update:** `$push`, `$addToSet`, `$pull`
+
+**Remember:** MongoDB operators generally start with `$`. Use query operators to find documents and update operators to modify them.
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
+# 8. MongoDB Cursors
 
+## 1. What Is a Cursor?
 
+A **cursor** is an object that allows us to access and retrieve documents returned by a MongoDB query, one document at a time or in batches.
 
+Cursors are especially useful when processing large datasets without loading all matching documents into a single array.
 
+## 2. Does MongoDB Use Cursors Automatically?
 
+**Yes.** MongoDB automatically returns a cursor when we execute a `find()` query in the MongoDB Shell.
+
+```javascript
+db.users.find()
+```
+
+- MongoDB provides a cursor for the query results.
+- The MongoDB Shell automatically iterates through the cursor and displays the results.
+- We do not need to create a cursor manually in the MongoDB Shell.
+
+## 3. Cursor in Mongoose
+
+In MERN applications, we commonly use Mongoose to interact with MongoDB.
+
+Assume the `User` collection contains:
+
+```javascript
+{ name: "Rahul", age: 22 }
+{ name: "Amit", age: 25 }
+{ name: "Priya", age: 24 }
+```
+
+### A. `User.find()`
+
+**Returns:** Mongoose Query object.
+
+```javascript
+const result = User.find();
+
+console.log(result); // Mongoose Query object
+```
+
+The query has not yet been awaited to retrieve the final result.
+
+### B. `await User.find()`
+
+**Returns:** An array of matching documents.
+
+```javascript
+const users = await User.find();
+
+console.log(users);
+```
+
+Example output:
+
+```javascript
+[
+  { name: "Rahul", age: 22 },
+  { name: "Amit", age: 25 },
+  { name: "Priya", age: 24 }
+]
+```
+
+Mongoose collects the matching documents into an array.
+
+### C. `User.find().cursor()`
+
+**Returns:** A Mongoose `QueryCursor` object.
+
+```javascript
+const cursor = User.find().cursor();
+
+console.log(cursor); // QueryCursor object
+```
+
+Use the cursor to process documents one at a time:
+
+```javascript
+for await (const user of User.find().cursor()) {
+  console.log(user.name);
+}
+```
+
+Output:
+
+```text
+Rahul
+Amit
+Priya
+```
+
+### D. `await User.find().cursor()`
+
+**Returns:** A `QueryCursor` object.
+
+```javascript
+const cursor = await User.find().cursor();
+```
+
+Here, `await` is unnecessary because `.cursor()` directly returns a cursor object rather than a Promise.
+
+## 4. Common Cursor Methods
+
+| Method | Use |
+|---|---|
+| `next()` | Retrieves the next document |
+| `hasNext()` | Checks whether another document is available |
+| `close()` | Closes the cursor |
+| `limit(n)` | Limits the number of documents returned |
+| `skip(n)` | Skips a specified number of documents |
+| `sort()` | Sorts the query results |
+
+**Note:** `limit()`, `skip()`, and `sort()` are query methods used to control the results before retrieving them through a cursor. `next()`, `hasNext()`, and `close()` are cursor operations in the MongoDB Shell.
+
+## 5. Why Do We Use Cursors?
+
+Imagine a database contains **10 lakh (1 million) users**.
+
+Loading all matching documents into an array can consume a significant amount of memory.
+
+Cursors allow applications to process large query results gradually.
+
+### Common use cases
+
+- Processing large numbers of users.
+- Exporting database records.
+- Migrating data between systems.
+- Processing records in background jobs.
+- Sending bulk emails to users.
+
+**Main benefit:** Cursors help reduce memory usage by avoiding the need to hold the entire result set in a single array.
+
+## 6. Cursor vs Normal Query
+
+| Code | Return Value | Use |
+|---|---|---|
+| `User.find()` | Mongoose Query object | Defines a query |
+| `await User.find()` | Array of documents | Retrieves all matching documents into an array |
+| `User.find().cursor()` | QueryCursor object | Processes documents through a cursor |
+| `await User.findOne()` | One document or `null` | Retrieves one matching document |
+
+### Normal Query
+
+- Convenient for retrieving manageable amounts of data.
+- Returns an array when awaited.
+
+### Cursor
+
+- Processes documents one at a time.
+- Useful for large datasets.
+- Can reduce memory usage.
+
+## 7. Cursor-Based Pagination
+
+Pagination means displaying data page by page instead of showing all records at once.
+
+### Example: Get Page 2 with 10 Users per Page
+
+```javascript
+db.users.find()
+  .sort({ _id: 1 })
+  .skip(10)
+  .limit(10)
+```
+
+- Page 1: `skip(0).limit(10)`
+- Page 2: `skip(10).limit(10)`
+- Page 3: `skip(20).limit(10)`
+
+**Note:** For very large datasets, range-based pagination using an indexed field such as `_id` is often more efficient than skipping many documents.
+
+## 8. Quick Revision
+
+- A cursor provides access to query results.
+- MongoDB automatically returns a cursor for `find()` queries in the MongoDB Shell.
+- `User.find()` returns a Mongoose Query object.
+- `await User.find()` returns an array of documents.
+- `User.find().cursor()` returns a Mongoose `QueryCursor`.
+- Cursors allow documents to be processed one at a time.
+- `next()` retrieves the next document.
+- `hasNext()` checks whether another document is available.
+- `limit()`, `skip()`, and `sort()` help control query results.
+
+## Interview Answer
+
+**A cursor in MongoDB is used to access and iterate through query results. MongoDB automatically provides a cursor for `find()` queries. In Mongoose, we can explicitly use `.cursor()` to process large datasets one document at a time without collecting all the results into a single array.**
 --------------------------------------------------------------------------------------------------------------------------------------------------
+# MongoDB Practice Questions
 
+Assume the following collections: `users`, `products`, `orders`, and `posts`.
 
+## 1. User Queries
 
+1. Find all users from Delhi.
+2. Find users whose age is greater than 25.
+3. Find users whose age is less than or equal to 30.
+4. Find users whose city is not Mumbai.
+5. Find users whose age is between 20 and 30.
+6. Show only the `name` and `email` of all users.
+7. Find users whose name starts with `"R"`.
+8. Find users whose email contains `"gmail"`.
+9. Find users whose `city` field exists.
+10. Find users whose `phone` field does not exist.
+11. Sort users by age in ascending order.
+12. Sort users by age in descending order.
+13. Show only the first 5 users.
+14. Skip the first 10 users and show the next 5 users.
+15. Find users whose age is 20, 25, or 30.
+16. Find users whose age is not 20, 25, or 30.
+17. Count the total number of users.
+18. Find users named Rahul Sharma who live in Delhi.
+19. Find users whose city is Delhi or Mumbai.
+20. Find users whose age is not greater than 30.
+21. Find users whose name ends with `"a"`.
+22. Find users whose email domain is `yahoo.com`.
+23. Find users whose age field has a numeric BSON type.
+24. Find users whose age is an even number.
+25. Find users whose name has more than 5 characters.
 
+## 2. Product Queries
 
+26. Find products whose price is greater than 1000.
+27. Find products whose price is between 500 and 2000.
+28. Find products in the `"electronics"` category.
+29. Find products whose stock is less than 10.
+30. Find products that are out of stock.
+31. Sort products by price from low to high.
+32. Find the 5 most expensive products.
+33. Find products whose name contains `"phone"`.
+34. Find products whose discount is greater than 20%.
+35. Find products that do not belong to the electronics category.
+36. Find products with the `"gaming"` tag.
+37. Find products with both `"gaming"` and `"laptop"` tags.
+38. Find products with exactly 3 tags.
+
+## 3. Product Updates and Deletes
+
+39. Add a new `"new"` tag to a product.
+40. Remove the `"old"` tag from a product.
+46. Increase a product's price by 10%.
+47. Increase a product's stock by 50.
+48. Rename the `price` field to `productPrice`.
+49. Remove the `discount` field from a product.
+50. Add the field `featured: true` to a product.
+51. Delete products whose stock is 0.
+
+## 4. Order Queries
+
+41. Find all orders placed by Rahul.
+42. Find orders whose total amount is greater than 5000.
+43. Find orders placed after 1 January 2025.
+44. Find orders whose status is `"delivered"`.
+45. Find orders whose status is not `"cancelled"`.
+
+## 5. Order and User Deletes
+
+52. Delete users who have never placed an order.
+53. Delete orders older than 5 years.
+
+## 6. Blog Post Updates
+
+54. Increase a blog post's view count by 1.
+55. Add a new comment to a blog post.
+56. Remove a specific comment from a blog post.
+
+## 7. Wishlist and Shopping Cart
+
+57. Add a product to a user's wishlist.
+58. Remove a product from a user's wishlist.
+59. Add an item to a shopping cart.
+60. Remove an item from a shopping cart.
+
+---
+
+## Important Notes
+
+- Use `find()` to retrieve documents.
+- Use projection to select specific fields.
+- Use `sort()`, `limit()`, and `skip()` for sorting and basic pagination.
+- Use update operators such as `$set`, `$inc`, `$mul`, `$push`, `$addToSet`, and `$pull`.
+- Use `deleteOne()` or `deleteMany()` to delete documents.
+- Questions involving orders, comments, wishlists, and carts depend on how your collections and schemas are designed.
 --------------------------------------------------------------------------------------------------------------------------------------------------
+## 9. Normalization and Data Modeling in MongoDB
+
+### What Is Normalization?
+
+**Normalization** is a database design process that organizes data to reduce duplication, prevent data anomalies, and maintain data consistency.
+
+In MongoDB, we commonly choose between two ways to store related data:
+
+- **Embedding:** Store related data inside the same document.
+- **Referencing:** Store data in separate collections and link them using IDs.
+
+---
+
+### 9.1 Embedding
+
+**Embedding** means storing one document inside another document.
+
+Use embedding when data is small, closely related, and usually read together.
+
+**Example: User with Address**
+
+```javascript
+{
+  name: "Rahul",
+  email: "rahul@example.com",
+  address: {
+    city: "Delhi",
+    state: "Delhi",
+    pincode: "110001"
+  }
+}
+```
+
+Here, the address is stored inside the user document because it belongs to that user.
+
+#### Find a User by City
+
+Use **dot notation** to access nested fields.
+
+```javascript
+db.users.find({ "address.city": "Delhi" })
+```
+
+#### Update the City
+
+```javascript
+db.users.updateOne(
+  { name: "Rahul" },
+  { $set: { "address.city": "Mumbai" } }
+)
+```
+
+#### When to Use Embedding
+
+- Data is small.
+- Data is closely related.
+- Data is usually read together.
+- You want to retrieve related data in one query.
+
+**Examples:** User profile with address, order with a few items, or a post with a few comments.
+
+---
+
+### 9.2 Referencing
+
+**Referencing** means storing related data in separate documents or collections and connecting them using IDs.
+
+Use referencing when data is large, frequently updated, shared by multiple documents, or expected to grow.
+
+**Example: Students and Courses**
+
+A student can enroll in multiple courses, and each course can have multiple students.
+
+**Students collection:**
+
+```javascript
+{
+  _id: 101,
+  name: "Rahul",
+  courseIds: [201, 202]
+}
+```
+
+**Courses collection:**
+
+```javascript
+{
+  _id: 201,
+  title: "MongoDB"
+}
+```
+
+The student document stores course IDs instead of copying the complete course data.
+
+#### When to Use Referencing
+
+- Data is large or keeps growing.
+- Multiple documents share the same data.
+- Related data changes frequently.
+- You need to manage related data separately.
+
+**Examples:** Students and courses, products and categories, or videos and large comment collections.
+
+---
+
+### 9.3 Embedding vs. Referencing
+
+| Feature | Embedding | Referencing |
+|---|---|---|
+| Data storage | Same document | Separate documents |
+| Read speed | Often faster for related data | May need additional queries |
+| Data duplication | Possible | Usually less |
+| Growing data | Can become difficult | Easier to manage |
+| Updates | Simple for contained data | Useful for shared data |
+| Best use case | Small, related data | Large or shared data |
+
+> **Note:** Performance depends on the query pattern, indexes, and data structure. Referencing does not always require multiple queries; MongoDB also supports `$lookup` for joining collections.
+
+---
+
+### 9.4 Rules to Remember
+
+- **Rule 1: Small data → Embed**
+  - Example: User profile and address.
+
+- **Rule 2: Shared data → Reference**
+  - Example: A category used by many products.
+
+- **Rule 3: Large or growing data → Usually reference**
+  - Example: Thousands of comments on a video.
+
+- **Rule 4: Read related data together → Consider embedding**
+  - Example: A post with a few comments.
+
+- **Rule 5: Frequently updated shared data → Consider referencing**
+  - Example: Product details used by many orders.
+
+### Quick Revision
+
+- **Normalization:** Reduces unnecessary data duplication and helps maintain consistency.
+- **Embedding:** Stores related data inside one document.
+- **Referencing:** Links separate documents using IDs.
+- **Dot notation:** Accesses nested fields, such as `"address.city"`.
+- Choose the design based on how much data you have and how your application reads and updates it.
+-------------------------------------------------------------------------------------------------------------------------------------------------
+## 10. Indexing in MongoDB
+
+### What Is Indexing?
+
+An **index** is a technique that helps MongoDB find documents faster without scanning every document in a collection.
+
+Think of a book's index: instead of reading every page, you use the index to find the required topic.
+
+### Why Do We Need Indexing?
+
+Imagine a collection contains **10 lakh (1 million) users**.
+
+```javascript
+db.users.find({ email: "abc@gmail.com" })
+```
+
+- ❌ **Without an index:** MongoDB may scan the entire collection (`COLLSCAN`).
+- ✅ **With an index:** MongoDB can quickly locate matching documents using the index (`IXSCAN`).
+
+### Create an Index
+
+```javascript
+db.users.createIndex({ email: 1 })
+```
+
+- `1` = Ascending order
+- `-1` = Descending order
+
+MongoDB uses a B-tree-based index structure for many common index types.
+
+---
+
+### 10.1 Single-Field Index
+
+An index created on one field.
+
+```javascript
+db.users.createIndex({ email: 1 })
+```
+
+**Use case:** Searching users by email.
+
+### 10.2 Compound Index
+
+An index created on multiple fields.
+
+```javascript
+db.users.createIndex({ name: 1, age: 1 })
+```
+
+**Important:** Field order matters.
+
+This index supports queries on:
+- `name`
+- `name` and `age`
+
+It generally does not efficiently support queries on `age` alone.
+
+### 10.3 Multikey Index
+
+MongoDB automatically creates a multikey index when an indexed field contains an array.
+
+```javascript
+db.users.createIndex({ skills: 1 })
+```
+
+**Use case:** Finding users who have a particular skill.
+
+### 10.4 Text Index
+
+A text index supports full-text search on string fields.
+
+```javascript
+db.posts.createIndex({ title: "text", content: "text" })
+```
+
+**Search example:**
+
+```javascript
+db.posts.find({
+  $text: { $search: "MongoDB database" }
+})
+```
+
+**Useful for:** Blogs, articles, and text-search features.
+
+#### How Text Search Works
+
+- **Tokenization:** Splits text into searchable terms.
+- **Stop words:** Some common words may be ignored.
+- **Stemming:** Related word forms may be treated similarly, depending on language rules.
+- **Relevance score:** Helps rank matching results.
+
+#### Text Index Rules
+
+- A collection can have only one text index, but that index can include multiple fields.
+- Use double quotes inside the search string to search for an exact phrase.
+- Text search is different from regex pattern matching.
+
+**Example: Sort by relevance**
+
+```javascript
+db.posts.find(
+  { $text: { $search: "MongoDB database" } },
+  { score: { $meta: "textScore" }, title: 1 }
+).sort({ score: { $meta: "textScore" } })
+```
+
+---
+
+### 10.5 Unique Index
+
+A unique index prevents duplicate indexed values.
+
+```javascript
+db.users.createIndex({ email: 1 }, { unique: true })
+```
+
+**Use cases:** Email addresses and usernames that must be unique.
+
+**Important:**
+- Creating a unique index fails if existing documents contain duplicate indexed values.
+- A single-field unique index normally allows only one missing or `null` index value.
+- A suitable sparse or partial index can change which documents are included.
+
+### 10.6 Partial Index
+
+A partial index includes only documents that match a specified filter.
+
+```javascript
+db.users.createIndex(
+  { age: 1 },
+  { partialFilterExpression: { age: { $gt: 18 } } }
+)
+```
+
+This index includes documents where `age` is greater than `18`.
+
+**Benefits:**
+- Smaller index
+- Less index-maintenance work for documents outside the filter
+
+**Use cases:** Indexing selected active, paid, or eligible users when the filter matches the application's queries.
+
+### 10.7 Sparse Index
+
+A sparse index includes documents that contain the indexed field.
+
+```javascript
+db.users.createIndex({ phone: 1 }, { sparse: true })
+```
+
+Documents without a `phone` field are not included in this index.
+
+### 10.8 TTL Index
+
+A TTL (Time To Live) index automatically deletes documents after a specified time.
+
+**Use cases:** OTPs, sessions, and temporary logs.
+
+```javascript
+db.sessions.createIndex(
+  { expiresAt: 1 },
+  { expireAfterSeconds: 0 }
+)
+```
+
+Here, `expiresAt` must contain a BSON `Date`.
+
+**Important:**
+- MongoDB deletes expired documents using a background process.
+- Deletion is not immediate.
+- TTL indexes require a date field.
+
+---
+
+### 10.9 Covered Queries
+
+A **covered query** is a query where the index contains all the fields needed to find matching documents and return the results.
+
+MongoDB can answer the query directly from the index without fetching the full documents.
+
+**Benefits:**
+- Less disk reading
+- Potentially faster queries
+
+**A query may not be covered if:**
+- It needs a field that is not in the index.
+- `_id` is included by default but is not present in the index.
+
+If `_id` is not needed, exclude it with `{ _id: 0 }`.
+
+---
+
+### 10.10 How to Check Index Usage
+
+Use `explain()` to understand how MongoDB executes a query.
+
+```javascript
+db.users.find({ email: "abc@gmail.com" })
+  .explain("executionStats")
+```
+
+| Stage | Meaning |
+|---|---|
+| `COLLSCAN` | Scans documents in the collection |
+| `IXSCAN` | Scans an index |
+
+`IXSCAN` often indicates that an index is being used, but it does not always mean the query is faster. Check the execution statistics.
+
+### 10.11 Query Planner
+
+MongoDB's query planner chooses an execution plan based on the query and available indexes.
+
+- It selects a suitable execution plan.
+- It may cache plans for similar queries.
+- It does not necessarily test every index on every query.
+
+---
+
+### 10.12 Cardinality
+
+**Cardinality** means the number of distinct values in a field.
+
+| Field | Cardinality |
+|---|---|
+| `gender` | Usually low |
+| `email` | Usually high |
+
+High-cardinality fields can be useful for indexing, but the best choice depends on the query pattern and data distribution.
+
+---
+
+### 10.13 Indexing Best Practices
+
+**Consider indexing when:**
+- A field is searched frequently.
+- Queries often filter or sort by a field.
+- A compound index matches common query patterns.
+- You need to enforce unique values.
+
+**Avoid unnecessary indexes because:**
+- They use extra disk space.
+- They slow down inserts, updates, and deletes because indexes must be maintained.
+- They may provide little benefit for small collections or queries that match many documents.
+
+### Quick Revision
+
+- An index helps MongoDB find data faster.
+- `createIndex()` creates an index.
+- `1` = ascending; `-1` = descending.
+- Compound index field order matters.
+- Unique indexes prevent duplicate indexed values.
+- Partial and sparse indexes include selected documents.
+- TTL indexes delete expired documents in the background.
+- `COLLSCAN` = collection scan.
+- `IXSCAN` = index scan.
+- Covered queries can return results directly from an index.
+- Indexes improve some reads but add storage and write costs.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+## 11. Aggregation in MongoDB
+
+### What Is Aggregation?
+
+**Aggregation** pineline is a sequence of stages that process document form collection to filter,group,unwind,sort, and trasform or calculate data and get result.
+
+Think of aggregation as a pipeline: raw data goes in, passes through different stages, and comes out as meaningful information.
+
+### `find()` vs Aggregation
+
+| `find()` | Aggregation |
+|---|---|
+| Simple filtering | Complex data processing |
+| Basic sorting | Grouping and calculations |
+| Simple projection | Transforming and reshaping data |
+| No pipeline required | Uses multiple pipeline stages |
+| Limited join capabilities | Supports joins using `$lookup` |
+
+**Use `find()`** when simple filtering, sorting, and field selection are enough.
+
+**Use aggregation** when you need to calculate totals, group data, join collections, transform fields, or process arrays.
+
+---
+
+### 11.1 Aggregation Pipeline Syntax
+
+```javascript
+db.collection.aggregate([
+  { stage1: { /* operation */ } },
+  { stage2: { /* operation */ } }
+])
+```
+
+**How it works:**
+
+- Each stage performs one operation.
+- The output of one stage becomes the input of the next stage.
+- Stages can filter, group, transform, sort, or join documents.
+
+### Example: Total Revenue by Product Category
+
+Suppose you need to calculate the total revenue for each product category from delivered orders created in the last 24 hours.
+
+```javascript
+db.orders.aggregate([
+  {
+    $match: {
+      status: "delivered",
+      createdAt: {
+        $gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
+      }
+    }
+  },
+  {
+    $group: {
+      _id: "$category",
+      totalRevenue: { $sum: "$totalAmount" }
+    }
+  },
+  {
+    $sort: { totalRevenue: -1 }
+  }
+])
+```
+
+**How this pipeline works:**
+
+1. `$match` filters delivered orders from the last 24 hours.
+2. `$group` groups orders by category and calculates total revenue.
+3. `$sort` displays categories from highest revenue to lowest.
+
+*Note: This example assumes each order contains `status`, `createdAt`, `category`, and `totalAmount` fields.*
+
+---
+
+### 11.2 Main Aggregation Stages
+
+| Stage | Purpose |
+|---|---|
+| `$match` | Filter documents |
+| `$group` | Group documents and calculate values |
+| `$project` | Select, remove, rename, or calculate fields |
+| `$sort` | Sort documents |
+| `$lookup` | Join another collection |
+| `$unwind` | Split array elements into separate documents |
+| `$limit` | Limit the number of documents |
+| `$skip` | Skip a specified number of documents |
+| `$count` | Count the documents reaching that stage |
+| `$set` | Add or update fields |
+
+---
+
+### 11.3 `$match` — Filter Documents
+
+`$match` selects documents that satisfy a condition. It is similar to filtering with `find()`.
+
+```javascript
+db.orders.aggregate([
+  { $match: { status: "delivered" } }
+])
+```
+
+This returns only delivered orders.
+
+**Performance tip:** Put `$match` early in the pipeline when possible to reduce the number of documents processed by later stages. An appropriate index may help MongoDB filter efficiently.
+
+### 11.4 `$group` — Group and Calculate Data
+
+`$group` groups documents using a group key and performs calculations.
+
+It is conceptually similar to `GROUP BY` in SQL.
+
+```javascript
+db.orders.aggregate([
+  {
+    $group: {
+      _id: "$customerId",
+      totalSpent: { $sum: "$totalAmount" }
+    }
+  }
+])
+```
+
+This calculates the total amount spent by each customer.
+
+**Common accumulator operators:**
+
+- `$sum` — Calculate a total or count.
+- `$avg` — Calculate an average.
+- `$min` — Find the minimum value.
+- `$max` — Find the maximum value.
+- `$first` — Return the first value in the group.
+- `$last` — Return the last value in the group.
+- `$push` — Collect values into an array.
+- `$addToSet` — Collect unique values into an array.
+
+**Important:** The `_id` field in `$group` specifies the grouping key. Use `_id: null` to calculate one result across all input documents.
+
+### 11.5 `$project` — Shape the Output
+
+`$project` controls which fields appear in the output. It can also rename fields and create calculated fields.
+
+```javascript
+db.users.aggregate([
+  {
+    $project: {
+      name: 1,
+      email: 1,
+      _id: 0
+    }
+  }
+])
+```
+
+This returns only `name` and `email`, excluding `_id`.
+
+**Create a calculated field:**
+
+```javascript
+db.products.aggregate([
+  {
+    $project: {
+      name: 1,
+      price: 1,
+      priceWithTax: { $multiply: ["$price", 1.18] }
+    }
+  }
+])
+```
+
+This creates a `priceWithTax` field using an illustrative 18% tax rate.
+
+### 11.6 `$sort` — Sort Documents
+
+Use `$sort` to arrange documents in ascending or descending order.
+
+```javascript
+db.students.aggregate([
+  {
+    $sort: {
+      marks: -1,
+      name: 1
+    }
+  }
+])
+```
+
+- `marks: -1` — Higher marks first.
+- `name: 1` — Names in ascending order when marks are equal.
+
+### 11.7 `$lookup` — Join Collections
+
+`$lookup` combines matching documents from another collection. It is similar to a left outer join in SQL.
+
+Suppose `orders` contains a `userId` that matches the `_id` field in `users`.
+
+```javascript
+db.orders.aggregate([
+  {
+    $lookup: {
+      from: "users",
+      localField: "userId",
+      foreignField: "_id",
+      as: "userDetails"
+    }
+  }
+])
+```
+
+The matching user documents are added to an array named `userDetails`.
+
+**Important:** `$lookup` keeps the input document even when there is no match; the resulting array is empty.
+
+### 11.8 `$unwind` — Split Array Elements
+
+`$unwind` creates a separate output document for each element of an array.
+
+Suppose an order contains:
+
+```javascript
+{
+  orderId: 101,
+  items: ["Laptop", "Mouse", "Keyboard"]
+}
+```
+
+Run:
+
+```javascript
+db.orders.aggregate([
+  { $unwind: "$items" }
+])
+```
+
+The output contains three documents, one for each item.
+
+**Use cases:** Processing order items, product tags, comments, or other array data.
+
+By default, documents with missing, `null`, or empty arrays are omitted. Options can change this behavior.
+
+---
+
+### 11.9 `$limit` and `$skip`
+
+**`$limit`** returns at most a specified number of documents.
+
+```javascript
+db.products.aggregate([
+  { $limit: 5 }
+])
+```
+
+**`$skip`** skips a specified number of documents.
+
+```javascript
+db.products.aggregate([
+  { $skip: 10 },
+  { $limit: 5 }
+])
+```
+
+This skips the first 10 documents and returns up to the next 5. Use `$sort` before pagination when consistent ordering is required.
+
+### 11.10 `$count` — Count Documents
+
+```javascript
+db.orders.aggregate([
+  { $match: { status: "delivered" } },
+  { $count: "deliveredOrders" }
+])
+```
+
+This counts delivered orders that match the filter.
+
+---
+
+### Quick Revision
+
+- **Aggregation:** Processes and analyzes data.
+- **Pipeline:** A sequence of stages.
+- `$match` — Filter.
+- `$group` — Group and calculate.
+- `$project` — Shape output fields.
+- `$sort` — Sort results.
+- `$lookup` — Join collections.
+- `$unwind` — Split array elements.
+- `$limit` — Restrict result count.
+- `$skip` — Skip documents.
+- `$count` — Count matching documents.
+
+**Interview answer:** “MongoDB aggregation is a pipeline-based process used to filter, group, transform, join, and analyze documents. Each stage performs an operation, and its output passes to the next stage. It is useful for reports, revenue calculations, dashboards, and complex data analysis.”
+-------------------------------------------------------------------------------------------------------------------------------------------------
+## 12. Replication in MongoDB
+
+### What Happens If a MongoDB Server Crashes?
+
+If a MongoDB server crashes:
+
+- Users may not be able to access data.
+- The application may go down.
+- New data cannot be written to that server.
+
+**Solution:** Keep copies of the same data on multiple servers. This is called **Replication**.
+
+### What Is Replication?
+
+**Replication** is the process of maintaining multiple copies of the same data across multiple MongoDB servers to provide high availability and fault tolerance.
+
+### Benefits of Replication
+
+- **High Availability:** Another server can take over if the primary server fails and an eligible secondary is elected.
+- **Fault Tolerance:** A single server failure does not necessarily stop the database service.
+- **Disaster Recovery:** Replicas can help recover data after certain failures, but replication alone is not a backup.
+- **Read Scaling:** Some read operations can be served by secondary servers.
+
+---
+
+### 12.1 Replica Set
+
+MongoDB implements replication using a **Replica Set**.
+
+A replica set is a group of MongoDB servers that maintain the same dataset.
+
+It usually contains:
+
+- **Primary:** Receives writes and normally handles reads.
+- **Secondary:** Copies changes from the primary and can serve reads when configured.
+- **Arbiter (optional):** Participates in elections but does not store a copy of the dataset.
+
+### Replica Set Diagram
+
+```text
+                   Application
+                        |
+                  Read / Write
+                        |
+                  +-----------+
+                  |  PRIMARY  |
+                  | Read/Write|
+                  +-----------+
+                        |
+                   Oplog changes
+                   /           \
+                  v             v
+          +-----------+   +-----------+
+          | SECONDARY |   | SECONDARY |
+          |   Copy    |   |   Copy    |
+          +-----------+   +-----------+
+```
+
+---
+
+### 12.2 Oplog and Replication Sync
+
+MongoDB uses a special capped collection called the **oplog** (operations log) in the `local` database.
+
+The oplog records changes made to data, such as inserts, updates, and deletes.
+
+**How replication works:**
+
+1. A write operation is performed on the primary.
+2. The change is recorded in the primary's oplog.
+3. Secondary servers read the oplog entries.
+4. The secondaries apply those changes to their own datasets.
+
+This process keeps the replica set members synchronized.
+
+---
+
+### 12.3 Automatic Failover and Election
+
+What happens if the primary server goes down?
+
+1. The replica set detects that the primary is unavailable.
+2. Eligible members participate in an election.
+3. An eligible secondary may be elected as the new primary.
+4. The application can resume writes after the new primary is available and the client reconnects or discovers the new primary.
+
+This is called **Automatic Failover**.
+
+**Important:** A majority of voting members is normally required to elect a primary. Failover is not always instantaneous.
+
+---
+
+### 12.4 Replication Lag
+
+**Replication lag** is the delay between a change being applied on the primary and that change being applied on a secondary.
+
+Example:
+
+- Primary: User's profile is updated.
+- Secondary: Still contains the previous profile for a short time.
+
+**Causes:**
+- Slow network
+- Heavy workload
+- Large write operations
+- Secondary server resource limitations
+
+Replication lag can cause a read from a secondary to return older data.
+
+---
+
+### 12.5 Read Preferences
+
+By default, MongoDB reads and writes through the primary in a standard replica-set configuration.
+
+Read preferences control which replica-set members can serve read operations.
+
+- `primary` — Reads from the primary.
+- `primaryPreferred` — Prefers the primary.
+- `secondary` — Reads from eligible secondaries.
+- `secondaryPreferred` — Prefers secondaries.
+- `nearest` — Reads from an eligible member with suitable network latency.
+
+**Benefits of secondary reads:**
+- Can reduce read load on the primary.
+- Can help distribute read traffic.
+
+**Important:** Secondary reads may return stale data because of replication lag. Writes still go to the primary in the usual replica-set setup.
+
+---
+
+### 12.6 Replication vs Backup
+
+| Replication | Backup |
+|---|---|
+| Maintains live copies of data | Stores recoverable copies of data |
+| Continuously synchronizes changes | Usually created on a schedule or through a backup policy |
+| Supports availability and failover | Supports recovery from accidental deletion or corruption |
+| Changes propagate to replicas | Older backup versions can preserve earlier data |
+
+**Remember: Replication is NOT a backup.**
+
+### What If Someone Deletes Data on the Primary?
+
+A deletion is recorded in the oplog and replicated to secondary members.
+
+```text
+Delete document on Primary
+           |
+           v
+    Oplog records change
+           |
+           v
+  Secondaries apply deletion
+           |
+           v
+ Document deleted on replicas
+```
+
+That is why you need separate backups to recover accidentally deleted data.
+
+---
+
+### Quick Revision
+
+- **Replication:** Maintains copies of data across multiple servers.
+- **Replica Set:** Group of MongoDB servers sharing the same dataset.
+- **Primary:** Handles writes.
+- **Secondary:** Replicates changes from the primary.
+- **Oplog:** Records data changes for replication.
+- **Automatic Failover:** An eligible secondary is elected when the primary fails.
+- **Replication Lag:** Delay in applying changes to a secondary.
+- **Read Preference:** Controls where reads are served.
+- **Backup:** Provides a separate recovery copy.
+
+### Interview Answer
+
+“MongoDB replication maintains multiple copies of a dataset using a replica set. The primary handles writes and records changes in its oplog. Secondary members apply those changes to synchronize their data. If the primary fails, an eligible secondary can be elected as the new primary.
+Replication improves availability, but it is not a replacement for backups.”
+
+
+```mongod --replSet rs0 --port 27018 --dbpath C:\Program Files\MongoDB\Server\8.2\data\db1
+mongod --replSet rs0 --port 27019 --dbpath C:\Program Files\MongoDB\Server\8.2\data\db2
+mongod --replSet rs0 --port 27020 --dbpath C:\Program Files\MongoDB\Server\8.2\data\db3
+
+rs.initiate({
+    _id: "rs0",
+    members: [
+        { _id: 0, host: "localhost:27017" },
+        { _id: 1, host: "localhost:27018" },
+        { _id: 2, host: "localhost:27019" }
+    ]
+})
+```
+------------------------------------------------------------------------------------------------------------------------------------------------
+## 13. Sharding in MongoDB
+
+### What Is the Scaling Problem?
+
+Imagine Instagram has 500 million users. Can a single MongoDB server store and process all users, photos, comments, and messages forever?
+
+No. A single server has limited resources:
+
+- RAM
+- CPU
+- Storage
+- Network capacity
+
+This is called the **scaling problem**.
+
+### 13.1 Types of Scaling
+
+#### Vertical Scaling (Scale Up)
+
+Increase the power of one machine.
+
+**Example:** Increase RAM from `16 GB` to `64 GB`.
+
+**Problem:** A single machine eventually reaches its limits, and powerful hardware can become expensive.
+
+#### Horizontal Scaling (Scale Out)
+
+Add more servers and distribute the workload across them.
+
+This approach leads to **Sharding**.
+
+### 13.2 What Is Sharding?
+
+**Sharding** is the process of distributing data across multiple servers so that no single shard needs to store the entire dataset.
+
+In simple words:
+
+- **Replication = Copies data**
+- **Sharding = Divides data**
+
+| Replication | Sharding |
+|---|---|
+| Maintains multiple copies of data | Distributes data across shards |
+| Improves availability and fault tolerance | Supports horizontal scaling |
+| Members synchronize the same dataset | Different shards store different portions of the dataset |
+
+---
+
+### 13.3 Main Components of MongoDB Sharding
+
+MongoDB sharded clusters have three main components.
+
+**1. Shards**
+
+- Store the actual application data.
+- Each shard stores a portion of the sharded collection.
+- In production, each shard is typically a replica set.
+
+**2. Config Servers**
+
+- Store cluster metadata.
+- Track how data is distributed across shards.
+- Do not store the cluster's main application dataset as ordinary shard data.
+
+**3. `mongos` (Query Router)**
+
+- Acts as the entry point for client requests.
+- Routes queries to the appropriate shard or shards.
+- Applications typically connect through `mongos`, not directly to individual shards.
+
+### 13.4 Sharding Architecture Diagram
+
+```text
+              Application
+                   |
+                   v
+             +-----------+
+             |  mongos   |
+             |Query Router|
+             +-----------+
+                   |
+          Reads cluster metadata
+                   |
+                   v
+          +------------------+
+          |  Config Servers  |
+          |  Cluster Metadata|
+          +------------------+
+                   |
+          Routes queries to shards
+             /           \
+            v             v
+      +-----------+  +-----------+
+      |  Shard 1  |  |  Shard 2  |
+      |  Data A   |  |  Data B   |
+      +-----------+  +-----------+
+```
+
+---
+
+### 13.5 How a Query Reaches the Correct Shard
+
+Suppose `userId` is the shard key and a query searches for `userId: 500`.
+
+1. The application sends the query to `mongos`.
+2. `mongos` uses cluster metadata to determine the relevant shard or shards.
+3. If the query targets only Shard 2, `mongos` sends it there.
+4. Shard 2 processes the query.
+5. `mongos` returns the result to the application.
+
+**Important:** Not every query targets just one shard. Queries without useful shard-key information may need to reach multiple shards.
+
+---
+
+### 13.6 What Is a Shard Key?
+
+A **shard key** is a field, or combination of fields, MongoDB uses to distribute documents across shards.
+
+Example:
+
+```javascript
+{ userId: 500, name: "Rahul" }
+```
+
+If `userId` is the shard key, MongoDB uses its value to determine the document's placement.
+
+A good shard key should consider:
+
+- **Cardinality:** How many distinct values it has.
+- **Distribution:** Whether values spread data evenly.
+- **Query patterns:** Which fields queries commonly filter by.
+- **Write distribution:** Whether writes are spread across shards.
+
+High cardinality is often helpful, but it does not guarantee a good shard key on its own.
+
+---
+
+### 13.7 Range-Based Sharding
+
+MongoDB distributes documents according to ranges of shard-key values.
+
+**Example:**
+
+```text
+Shard Key: userId
+
+userId 1–1000       → Shard 1
+userId 1001–2000    → Shard 2
+userId 2001–3000    → Shard 3
+```
+
+**Advantages:**
+- Efficient for many range queries.
+- Nearby shard-key values can be stored in the same range.
+
+**Disadvantages:**
+- Poorly distributed or sequential keys can create hotspots.
+- Some shards may receive more writes or data than others.
+
+*These ranges are illustrative, not guaranteed MongoDB placement rules.*
+
+### 13.8 Hashed Sharding
+
+MongoDB hashes the shard-key value and distributes documents using the hashed values.
+
+```text
+Original userId → Hashed value → Shard placement
+```
+
+For example, nearby user IDs can map to very different hashed values.
+
+**Advantages:**
+- Can distribute monotonically increasing values more evenly.
+- Helps reduce certain write hotspots.
+
+**Disadvantages:**
+- Range queries on the original key are generally less efficient.
+- Queries that need to target shards may benefit less when they do not include the shard key.
+
+---
+
+### 13.9 Real-World Example
+
+Imagine YouTube stores data for millions of videos.
+
+Instead of keeping every video document and related metadata on one database server, the application can distribute data across multiple shards.
+
+This helps the database scale as data and traffic grow.
+
+The actual video files may be stored in a separate object-storage system; sharding the database does not mean every video file must live inside MongoDB.
+
+---
+
+### 13.10 What Is `sh` in MongoDB?
+
+`sh` is a helper object available in `mongosh` for managing sharded clusters.
+
+Examples include:
+
+```javascript
+sh.status()
+sh.enableSharding("myDatabase")
+```
+
+- `sh.status()` displays information about the sharded cluster.
+- `sh.enableSharding()` enables sharding for a database; you still need to configure sharding for the relevant collection.
+
+These commands require an appropriately configured sharded cluster and suitable permissions.
+
+---
+
+### 13.11 Sharding + Replication
+
+In production, each shard is commonly configured as a replica set.
+
+```text
+                 Sharded Cluster
+                 /             \
+                v               v
+          +-----------+   +-----------+
+          |  Shard 1  |   |  Shard 2  |
+          | Replica   |   | Replica   |
+          |   Set     |   |   Set     |
+          +-----------+   +-----------+
+```
+
+- **Sharding → Horizontal scalability**
+- **Replication → High availability and fault tolerance**
+
+Together, they help MongoDB handle large datasets while reducing the impact of individual server failures.
+
+### Quick Revision
+
+- **Vertical scaling:** Make one server more powerful.
+- **Horizontal scaling:** Add more servers.
+- **Sharding:** Distribute data across shards.
+- **Shard:** Stores a portion of the dataset.
+- **Config servers:** Store cluster metadata.
+- **`mongos`:** Routes queries.
+- **Shard key:** Determines data distribution.
+- **Range sharding:** Useful for many range queries but may create hotspots.
+- **Hashed sharding:** Can improve distribution but is less suitable for range queries.
+- **Replication + Sharding:** Availability plus scalability.
+
+### Interview Answer
+
+“MongoDB sharding is a horizontal scaling technique that distributes a large dataset across multiple shards. A shard key determines how documents are distributed. Config servers maintain cluster metadata, while `mongos` routes application queries to the appropriate shards. Sharding helps handle growing data and traffic, while replication is commonly used within each shard to improve availability and fault tolerance.”
+-------------------------------------------------------------------------------------------------------------------------------------------------
+## 14. Transactions in MongoDB
+
+### What Is a Transaction?
+
+Imagine Manas transfers ₹500 to Rahul.
+
+1. Deduct ₹500 from Manas's account.
+2. Add ₹500 to Rahul's account.
+
+**What if the server crashes after Step 1 but before Step 2?**
+
+- Manas loses ₹500.
+- Rahul does not receive ₹500.
+- The account balances become incorrect.
+
+A **transaction** groups multiple database operations into a single unit of work.
+
+**In simple words: All or Nothing.**
+
+Either all operations succeed, or the transaction is rolled back.
+
+### 14.1 ACID Properties
+
+Every transaction aims to maintain the ACID properties.
+
+**A — Atomicity**
+
+All operations succeed together, or none of their changes are committed.
+
+**Example:** If adding ₹500 to Rahul's account fails, the deduction from Manas's account is rolled back.
+
+**C — Consistency**
+
+A transaction takes the database from one valid state to another, preserving defined rules and constraints.
+
+**Example:** The total money across both accounts remains unchanged during a ₹500 transfer.
+
+**I — Isolation**
+
+Concurrent transactions should not interfere in ways that violate transaction isolation guarantees.
+
+**Example:** Two users transferring money simultaneously should not cause incorrect account balances.
+
+**D — Durability**
+
+Once a transaction is successfully committed, its changes are persisted according to MongoDB's write concern and durability guarantees.
+
+**Example:** A committed transfer should survive a server restart when the required durability settings are used.
+
+---
+
+### 14.2 Transaction Flow
+
+```text
+        Start Transaction
+                |
+                v
+     Deduct ₹500 from Manas
+                |
+                v
+      Add ₹500 to Rahul
+                |
+                v
+        All operations OK?
+           /          \
+         Yes           No
+          |             |
+          v             v
+       COMMIT         ABORT
+          |             |
+          v             v
+   Save all changes  Roll back changes
+```
+
+### 14.3 MongoDB Transaction Example
+
+MongoDB transactions can execute multiple operations across documents and collections.
+
+Example using Node.js, Mongoose, and an existing `mongoose` connection:
+
+```javascript
+const session = await mongoose.startSession();
+
+try {
+  session.startTransaction();
+
+  await Account.updateOne(
+    { name: "Manas" },
+    { $inc: { balance: -500 } },
+    { session }
+  );
+
+  await Account.updateOne(
+    { name: "Rahul" },
+    { $inc: { balance: 500 } },
+    { session }
+  );
+
+  await session.commitTransaction();
+  console.log("Transfer successful");
+} catch (error) {
+  await session.abortTransaction();
+  console.error("Transfer failed:", error);
+} finally {
+  await session.endSession();
+}
+```
+
+**Important:** This is a simplified example. A real money-transfer implementation must validate account existence, check sufficient funds, prevent invalid amounts, and handle concurrent updates safely.
+
+### 14.4 Commit vs Abort
+
+| Operation | Meaning |
+|---|---|
+| `commitTransaction()` | Commit all transaction changes |
+| `abortTransaction()` | Abort the transaction and discard its uncommitted changes |
+| `endSession()` | End the session |
+
+### 14.5 Requirements for MongoDB Transactions
+
+Multi-document transactions require MongoDB to run as a:
+
+- **Replica Set**, or
+- **Sharded Cluster**
+
+They are not supported on a standalone MongoDB server.
+
+For local development, you can configure a **single-node replica set** to practice transactions.
+
+### Quick Revision
+
+- **Transaction:** A group of operations treated as one unit.
+- **Atomicity:** All or nothing.
+- **Consistency:** Preserve database rules.
+- **Isolation:** Safely handle concurrent operations.
+- **Durability:** Committed changes are persisted.
+- `startTransaction()` — Start a transaction.
+- `commitTransaction()` — Commit changes.
+- `abortTransaction()` — Abort changes.
+- Multi-document transactions require a replica set or sharded cluster.
+
+### Interview Answer
+
+“MongoDB transactions allow multiple database operations to succeed or fail as a single unit. They follow ACID properties: Atomicity, Consistency, Isolation, and Durability. For example, during a bank transfer, if deducting money succeeds but crediting the recipient fails, the transaction can be aborted so the deduction is not committed. Multi-document transactions require a replica set or sharded cluster.”
+-------------------------------------------------------------------------------------------------------------------------------------------------
+## 15. Write Concern in MongoDB
+
+### What Is Write Concern?
+
+Suppose we have a MongoDB replica set and our application inserts a document.
+
+When should MongoDB report that the write was successful?
+
+1. When the primary acknowledges the write.
+2. When the primary and one or more secondary members acknowledge it.
+3. When a majority of voting members acknowledge it.
+4. When the write is recorded in the journal.
+
+MongoDB lets us control this behavior using **Write Concern**.
+
+**Definition:** Write Concern determines the level of acknowledgment MongoDB requires before considering a write operation successful.
+
+In simple words, it controls how much confirmation MongoDB waits for before returning a write result.
+
+### 15.1 Why Do We Need Write Concern?
+
+Imagine the primary saves a document but crashes before the secondaries replicate it.
+
+With `w: 1`, the primary can acknowledge the write before any secondary has copied it. If the primary fails before replication, that write may be lost after failover.
+
+Using `w: "majority"` helps reduce this risk by waiting for acknowledgment from a majority of voting members.
+
+### 15.2 Types of Write Concern
+
+#### 1. `w: 1`
+
+Wait for acknowledgment from the primary.
+
+```javascript
+db.users.insertOne(
+  { name: "Rahul" },
+  { writeConcern: { w: 1 } }
+)
+```
+
+- Common default for replica-set writes.
+- Does not require secondary acknowledgment.
+- A recently acknowledged write may be rolled back after failover.
+
+#### 2. `w: "majority"`
+
+Wait for acknowledgment from a majority of voting members.
+
+```javascript
+db.users.insertOne(
+  { name: "Rahul" },
+  { writeConcern: { w: "majority" } }
+)
+```
+
+- Provides stronger durability guarantees.
+- Commonly used when write reliability is important.
+- Does not necessarily mean every replica has received the write.
+
+#### 3. `w: 0`
+
+Do not wait for acknowledgment.
+
+```javascript
+db.users.insertOne(
+  { name: "Rahul" },
+  { writeConcern: { w: 0 } }
+)
+```
+
+- The client does not wait for normal write acknowledgment.
+- The application cannot reliably confirm that the write succeeded.
+- Write errors may not be reported to the client normally.
+
+**Important:** `w: 0` does not mean MongoDB waits for zero nodes to save the document and then confirms success. It means the client requests an unacknowledged write.
+
+#### 4. `j: true`
+
+Wait for the write to be recorded in the journal on the acknowledging member.
+
+```javascript
+db.users.insertOne(
+  { name: "Rahul" },
+  { writeConcern: { w: 1, j: true } }
+)
+```
+
+- Improves protection against certain crashes and power failures.
+- Journal behavior depends on storage configuration and MongoDB settings.
+- It does not mean the write has been replicated to other members.
+
+#### 5. `wtimeout`
+
+Set a time limit for waiting for the requested write acknowledgment.
+
+```javascript
+db.users.insertOne(
+  { name: "Rahul" },
+  {
+    writeConcern: {
+      w: "majority",
+      wtimeout: 5000
+    }
+  }
+)
+```
+
+Here, `wtimeout: 5000` means MongoDB waits up to approximately 5 seconds for the requested acknowledgment before reporting a write concern timeout.
+
+**Important:** A timeout does not automatically undo the write. The write may already have succeeded on some members, so its final replication status can be uncertain.
+
+---
+
+### 15.3 Quick Comparison
+
+| Setting | Meaning |
+|---|---|
+| `w: 0` | No acknowledgment requested |
+| `w: 1` | Primary acknowledgment |
+| `w: "majority"` | Majority acknowledgment |
+| `j: true` | Wait for journal acknowledgment |
+| `wtimeout` | Limit acknowledgment waiting time |
+
+### Quick Revision
+
+- **Write Concern:** Controls the acknowledgment required for a write.
+- `w: 1` — Primary acknowledges.
+- `w: "majority"` — Majority of voting members acknowledge.
+- `w: 0` — Unacknowledged write.
+- `j: true` — Wait for journal acknowledgment.
+- `wtimeout` — Limits waiting time; it does not guarantee rollback.
+
+### Interview Answer
+
+“MongoDB Write Concern controls how much acknowledgment is required before a write operation is considered successful. With `w: 1`, the primary acknowledges the write. With `w: "majority"`, a majority of voting members must acknowledge it. The `j: true` option requests journal acknowledgment, while `wtimeout` limits how long MongoDB waits for the required acknowledgment.”
+------------------------------------------------------------------------------------------------------------------------------------------------
+# 16. MongoDB Backup and Recovery
+
+## 16.1 What Is a Backup?
+
+A **backup** is a separate copy of database data that can be used to recover information if the original data is lost, corrupted, or accidentally deleted.
+
+**Remember:** Backup = Insurance for your database.
+
+### Why Do We Need Backups?
+
+| Risk | Example |
+|---|---|
+| Human Error | A developer runs `db.users.drop()` accidentally. |
+| Server Failure | The server crashes or the SSD gets damaged. |
+| Cyberattack | Ransomware damages or encrypts database files. |
+| Software Bugs | A bug accidentally deletes or modifies important data. |
+| Cloud Mistakes | A cloud database instance is deleted accidentally. |
+| Natural Disaster | A fire or other disaster damages the data center. |
+
+## 16.2 Types of MongoDB Backups
+
+MongoDB backups are commonly classified into two main types:
+
+### 1. Logical Backup
+
+A logical backup exports database data into a portable format, such as BSON or JSON.
+
+**Example using `mongodump`:**
+
+```bash
+mongodump --uri="mongodb://localhost:27017/myDatabase" --out="./backup"
+```
+
+This creates a backup of the specified database.
+
+**Restore the backup:**
+
+```bash
+mongorestore --uri="mongodb://localhost:27017" ./backup
+```
+
+### 2. Physical Backup
+
+A physical backup copies the underlying database files or uses a storage snapshot.
+
+- It can be useful for large databases.
+- It depends on the database storage and deployment setup.
+- A simple file copy of a running database may not be consistent, so use a supported backup procedure.
+
+> **Interview tip:** Logical backups export database contents, while physical backups preserve the underlying database files.
+
+## 16.3 Important Backup Practices
+
+- Schedule backups regularly.
+- Store backups separately from the original database.
+- Keep copies in a different location or cloud account when appropriate.
+- Encrypt sensitive backup data.
+- Test restoration regularly.
+- Define how much data loss and downtime your application can tolerate.
+
+**Important:** Replication is not a replacement for backups. If a document is accidentally deleted from the primary, that deletion can replicate to secondary members.
+
+---
+
+# 17. Important MongoDB Query Performance Concepts
+
+These concepts are especially useful for MongoDB and MERN stack interviews.
+
+## 17.1 COLLSCAN
+
+`COLLSCAN` means **Collection Scan**.
+
+MongoDB checks documents in a collection to find those matching a query.
+
+```javascript
+db.users.find({ email: "abc@gmail.com" })
+```
+
+If there is no suitable index, MongoDB may examine many or all documents.
+
+**Disadvantage:** It can be slow for large collections.
+
+## 17.2 IXSCAN
+
+`IXSCAN` means **Index Scan**.
+
+MongoDB uses an index to find matching documents more efficiently.
+
+```javascript
+db.users.createIndex({ email: 1 });
+
+db.users.find({ email: "abc@gmail.com" });
+```
+
+If MongoDB chooses this index, the query plan can show `IXSCAN`.
+
+| COLLSCAN | IXSCAN |
+|---|---|
+| Scans collection documents | Scans index entries |
+| Can be slow for large collections | Often faster for selective queries |
+| Does not require a suitable index | Requires a suitable index |
+| May examine many documents | Can examine fewer documents |
+
+**Important:** An index does not guarantee that every query will use `IXSCAN`. MongoDB's query planner chooses a plan based on the query and available indexes.
+
+### How to Check the Query Plan
+
+```javascript
+db.users
+  .find({ email: "abc@gmail.com" })
+  .explain("executionStats");
+```
+
+Look for `COLLSCAN` or `IXSCAN` in the winning execution plan.
+
+## 17.3 Projection
+
+**Projection** means selecting only the fields you need from a document.
+
+Example:
+
+```javascript
+db.users.find(
+  {},
+  { name: 1, email: 1, _id: 0 }
+);
+```
+
+This returns only `name` and `email`, excluding `_id`.
+
+**Why use projection?**
+
+- Reduces unnecessary data transfer.
+- Makes query results easier to
