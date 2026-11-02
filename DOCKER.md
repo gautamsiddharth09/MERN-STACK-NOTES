@@ -248,7 +248,12 @@ coverage
 
 ## 8. Docker Compose: Run backend + MongoDB
 
-**Docker Compose** lets you define multiple services in one YAML file and start them together.
+**Docker Compose** is a tool used to run multiple docker containers together using one file and one command.
+
+- Main file docker ki
+
+- docker-compose.yml
+
 
 ### Visual: MERN services
 
@@ -289,21 +294,20 @@ Create `compose.yaml` in the root folder:
 services:
   backend:
     build: ./backend
+    env_file:
+      - ./backend/.env
     ports:
-      - "5000:5000"
-    environment:
-      PORT: 5000
-      MONGO_URI: mongodb://mongo:27017/mern_app
-    depends_on:
-      - mongo
+      - "8000:5000"
 
-  mongo:
-    image: mongo:8
-    volumes:
-      - mongo_data:/data/db
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
 
-volumes:
-  mongo_data:
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
 ```
 
 This assumes the backend reads `process.env.MONGO_URI`, has a working Dockerfile, and connects to MongoDB.
@@ -313,22 +317,7 @@ This assumes the backend reads `process.env.MONGO_URI`, has a working Dockerfile
 ```bash
 docker compose up --build
 ```
-Build images if needed and start services.
-
-```bash
-docker compose up -d --build
-```
-Start in the background.
-
-```bash
-docker compose ps
-```
-Show Compose services.
-
-```bash
-docker compose logs -f backend
-```
-Follow backend logs.
+Build images and start
 
 ```bash
 docker compose down
@@ -356,30 +345,93 @@ mongodb://mongo:27017/mern_app
 
 ## 9. Docker volumes: Keep MongoDB data
 
-A **volume** stores data separately from a container's writable layer. The data can remain when the container is removed and recreated.
+## What are Docker Volumes?
 
-```yaml
-services:
-  mongo:
-    image: mongo:8
-    volumes:
-      - mongo_data:/data/db
+Docker Volumes are used to store data permanently outside containers.
 
-volumes:
-  mongo_data:
+Data remains safe even if containers are deleted or restarted.
+
+## Types of Docker Volumes
+
+There are two common ways to persist data in Docker:
+
+### 1. Bind Mount
+
+A Bind Mount connects a folder from your local machine to a folder inside the container.
+
+- **Data stored in:** Local Machine
+- **Use case:** Development
+- **Syntax:**
+
+```bash
+-v "local-folder:container-folder"
 ```
 
-### Named volume vs bind mount
+**Example:**
 
-| Named volume | Bind mount |
-|---|---|
-| Managed by Docker | Uses a path on your computer |
-| Good for database data | Useful for local code development |
-| Example: `mongo_data:/data/db` | Example: `./backend:/app` |
+```bash
+docker run -it -v "D:\project:/app" ubuntu
+```
 
-**Interview answer:** I use a named volume to persist MongoDB data. I may use a bind mount during development so code changes are available inside the container.
+Here:
+- `D:\project` is the folder on your local machine.
+- `/app` is the folder inside the container.
 
----
+Any changes made in the shared folder are reflected on both sides.
+
+### 2. Named Volume
+
+A Named Volume is managed by Docker and stores data in Docker's internal storage.
+
+- **Data stored in:** Docker Internal Storage
+- **Use case:** Database Storage
+- **Syntax:**
+
+```bash
+-v volume-name:container-folder
+```
+
+**Example:**
+
+```bash
+docker run -it -v mongo-data:/data/db mongo
+```
+
+Here:
+- `mongo-data` is the name of the Docker volume.
+- `/data/db` is the directory inside the MongoDB container.
+
+MongoDB data remains stored in the named volume even if the container is deleted.
+
+## Difference Between Bind Mount and Named Volume
+
+| Feature | Bind Mount | Named Volume |
+|---|---|---|
+| Storage Location | Local Machine | Docker Internal Storage |
+| Managed By | User | Docker |
+| Common Use Case | Development | Database Storage |
+| Syntax | Local path : Container path | Volume name : Container path |
+
+## Useful Docker Volume Commands
+
+```bash
+# List all volumes
+docker volume ls
+
+# Create a named volume
+docker volume create mongo-data
+
+# Inspect a volume
+docker volume inspect mongo-data
+
+# Remove a volume
+docker volume rm mongo-data
+
+# Remove all unused volumes
+docker volume prune
+```
+
+**Important:** Removing a container does not automatically remove its named volume. However, deleting the volume itself can permanently delete its stored data.
 
 ## 10. Docker networking
 
