@@ -400,6 +400,7 @@ app.post("/signup", async (req, res) => {
   });
 
 });
+```
 
 ### How Queue Works
 
