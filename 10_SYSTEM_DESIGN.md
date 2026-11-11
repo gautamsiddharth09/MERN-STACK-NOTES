@@ -7,6 +7,7 @@
 It explains how different technologies and components work together to build a complete application.
 
 The goal is to create a system that can handle:
+
 - Multiple users and requests.
 - High traffic.
 - Large amounts of data.
@@ -14,6 +15,7 @@ The goal is to create a system that can handle:
 - Application failures and recovery.
 
 ## 2. Technologies Used in System Design
+
 
 The following technologies can be combined to build a production-ready backend architecture.
 
