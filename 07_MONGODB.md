@@ -2185,6 +2185,7 @@ Look for `COLLSCAN` or `IXSCAN` in the winning execution plan.
 
 Example:
 
+
 ```javascript
 db.users.find(
   {},

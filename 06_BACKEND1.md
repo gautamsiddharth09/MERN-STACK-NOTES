@@ -238,6 +238,7 @@ Child processes allow our **Node.js** or Express application to create another p
 
 ## Q13. What is clustering in Node.js, and how does the cluster module help utilize multi-core CPUs?
 
+
 ### Answer
 
 Node.js clustering means running multiple worker processes of the same **Node.js** application. Normally, **Node.js** uses one main process for JavaScript execution. The `cluster` module allows us to create multiple workers, so multiple CPU cores can be utilized. This is useful for handling high traffic because different workers can handle incoming requests.
